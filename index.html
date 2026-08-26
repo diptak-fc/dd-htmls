@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MioTetto Listing Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+ --ground:#F3F2EF;--surface:#FFFFFF;--surface-2:#EAE8E3;
+ --ink:#16191A;--ink-2:#4A4F50;--ink-3:#7E8180;
+ --rule:#D6D3CC;--rule-2:#BFBBB2;
+ --accent:#0E4F5B;--accent-soft:#DCE9EB;
+ --crit:#A93A30;--good:#356B4E;
+ --hd-bg:#16191A;--hd-fg:#F3F2EF;--hd-rule:rgba(243,242,239,.17);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --ground:#14181A;--surface:#1B2124;--surface-2:#232A2D;
+ --ink:#E9E7E1;--ink-2:#B3B7B6;--ink-3:#8A8F8E;
+ --rule:#2E3639;--rule-2:#3E484C;
+ --accent:#6FC0CE;--accent-soft:#17343A;
+ --crit:#E8887C;--good:#7FBE9B;
+ --hd-bg:#232A2D;--hd-fg:#E9E7E1;--hd-rule:#3E484C;
+}}
+:root[data-theme="dark"]{
+ --ground:#14181A;--surface:#1B2124;--surface-2:#232A2D;
+ --ink:#E9E7E1;--ink-2:#B3B7B6;--ink-3:#8A8F8E;
+ --rule:#2E3639;--rule-2:#3E484C;
+ --accent:#6FC0CE;--accent-soft:#17343A;
+ --crit:#E8887C;--good:#7FBE9B;
+ --hd-bg:#232A2D;--hd-fg:#E9E7E1;--hd-rule:#3E484C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ground);color:var(--ink);
+ font-family:"Source Serif 4",Georgia,serif;font-size:17px;line-height:1.6;
+ -webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+.wrap{max-width:940px;margin:0 auto;padding:0 26px;width:100%}
+h1,h2,h3,.lbl,.cta{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.lbl{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+
+header{background:var(--surface);border-bottom:2px solid var(--ink)}
+.mast{padding:52px 0 38px}
+.mast .lbl{color:var(--accent)}
+h1{font-size:clamp(32px,5.5vw,50px);font-weight:800;letter-spacing:-.028em;line-height:1.03;
+ margin-top:14px;max-width:17ch;text-wrap:balance}
+.sub{font-size:18.5px;color:var(--ink-2);max-width:60ch;margin-top:18px}
+
+.stats{background:var(--hd-bg);color:var(--hd-fg)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+ border-left:1px solid var(--hd-rule)}
+.scell{padding:20px 22px;border-right:1px solid var(--hd-rule)}
+.scell .lbl{color:inherit;opacity:.6;margin-bottom:7px}
+.scell b{font-family:Archivo,sans-serif;font-size:29px;font-weight:800;letter-spacing:-.03em;
+ line-height:1;display:block;font-variant-numeric:tabular-nums}
+.scell p{font-size:13px;line-height:1.4;opacity:.75;margin-top:7px}
+
+main{flex:1;padding:52px 0 60px}
+.cards{display:grid;gap:20px}
+@media(min-width:800px){.cards{grid-template-columns:1fr 1fr}}
+.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--rule-2);
+ text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.card:hover,.card:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
+@media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+.card-top{padding:26px 26px 0}
+.card .lbl{color:var(--accent);display:block}
+.card h2{font-size:22px;font-weight:700;letter-spacing:-.018em;line-height:1.22;margin-top:12px;
+ text-wrap:balance}
+.card p{font-size:15px;color:var(--ink-2);margin-top:12px;line-height:1.52}
+.facts{list-style:none;margin:20px 0 0;padding:18px 0 0;border-top:1px solid var(--rule);
+ display:grid;gap:7px}
+.facts li{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-3);
+ display:flex;gap:9px;line-height:1.45}
+.facts b{color:var(--ink-2);font-weight:600;font-variant-numeric:tabular-nums;
+ min-width:52px;text-align:right}
+.card-foot{margin-top:auto;padding:22px 26px 24px}
+.cta{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:700;
+ letter-spacing:.11em;text-transform:uppercase;color:var(--accent);
+ border-bottom:2px solid var(--accent);padding-bottom:4px}
+.card:hover .cta .arw{transform:translateX(4px)}
+.arw{transition:transform .15s}
+@media(prefers-reduced-motion:reduce){.arw{transition:none}}
+
+.note{margin-top:34px;border-left:3px solid var(--rule-2);padding:4px 0 4px 20px;
+ font-size:15px;color:var(--ink-2);max-width:70ch}
+.note strong{color:var(--ink);font-weight:600}
+
+footer{border-top:1px solid var(--rule);padding:26px 0 44px;
+ font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);line-height:1.7}
+footer p{max-width:76ch}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="wrap mast">
+  <span class="lbl">MioTetto &middot; Amazon US &middot; 26 August 2026</span>
+  <h1>Listing audit and catalogue fixes</h1>
+  <p class="sub">Two working documents from the same pass over the MioTetto catalogue: what the
+   listings are doing wrong, and the rebuilt fields that fix it. Both read in the browser &mdash;
+   nothing to download.</p>
+ </div>
+</header>
+
+<div class="stats">
+ <div class="wrap">
+  <div class="sgrid">
+   <div class="scell"><span class="lbl">ASINs reviewed</span><b>40</b><p>the full category listings report</p></div>
+   <div class="scell"><span class="lbl">Backend fields dead</span><b>31</b><p>over the 249-byte cap, dropped from the index</p></div>
+   <div class="scell"><span class="lbl">Titles over the cap</span><b>25</b><p>against Amazon's 75-character limit</p></div>
+   <div class="scell"><span class="lbl">Niche coverage</span><b>99.7%</b><p>of baby play mat clicks on the board used</p></div>
+  </div>
+ </div>
+</div>
+
+<main>
+ <div class="wrap">
+  <div class="cards">
+
+   <a class="card" href="MioTetto_B091YKYFPX_Listing_Audit_2026-08-26.html">
+    <div class="card-top">
+     <span class="lbl">Document 01 &middot; The audit</span>
+     <h2>The tile mat is being found. It just isn&rsquo;t being read.</h2>
+     <p>Where B091YKYFPX actually sits in the baby play mat niche, the eight findings ranked by what
+      they cost, the verified rewrite, and the order to fix things in.</p>
+     <ul class="facts">
+      <li><b>8</b><span>findings, biggest first</span></li>
+      <li><b>60</b><span>competitor products on the board</span></li>
+      <li><b>3/10</b><span>score before, 7/10 after</span></li>
+     </ul>
+    </div>
+    <div class="card-foot"><span class="cta">Read the audit <span class="arw">&rarr;</span></span></div>
+   </a>
+
+   <a class="card" href="MioTetto_Backend_Terms_Rebuild_2026-08-26.html">
+    <div class="card-top">
+     <span class="lbl">Document 02 &middot; The fix</span>
+     <h2>Thirty-one ASINs with a keyword field Amazon never reads</h2>
+     <p>Every backend search-terms field over the byte cap, rebuilt and ready to paste. Filter by
+      product group, and copy any field with one click.</p>
+     <ul class="facts">
+      <li><b>38</b><span>SKU rows rebuilt</span></li>
+      <li><b>479 B</b><span>median before, all now under 249</span></li>
+      <li><b>9,133</b><span>bytes reclaimed</span></li>
+     </ul>
+    </div>
+    <div class="card-foot"><span class="cta">Open the rebuild <span class="arw">&rarr;</span></span></div>
+   </a>
+
+  </div>
+
+  <p class="note"><strong>Nothing in either document has been uploaded to Seller Central.</strong>
+   Both are drafts for review. Where a change needs a decision that isn&rsquo;t a copywriter&rsquo;s
+   to make &mdash; a product claim, a dimension nobody has verified &mdash; it is flagged in place
+   rather than settled quietly.</p>
+ </div>
+</main>
+
+<footer>
+ <div class="wrap">
+  <p>Built from Category+Listings+Report_08-25-2026.xlsm and the Opportunity Explorer baby play mat
+   board (16 Aug 2026). Figures derived from those exports read <em>Derived, not measured</em>. No COGS
+   was supplied, so no margin or forecast figure appears in either document.</p>
+ </div>
+</footer>
+
+</body>
+</html>
