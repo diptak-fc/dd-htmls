@@ -1,0 +1,1407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backend Terms Rebuild — MioTetto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+ --ground:#F3F2EF;--surface:#FFFFFF;--surface-2:#EAE8E3;
+ --ink:#16191A;--ink-2:#4A4F50;--ink-3:#7E8180;
+ --rule:#D6D3CC;--rule-2:#BFBBB2;
+ --accent:#0E4F5B;--accent-soft:#DCE9EB;
+ --crit:#A93A30;--crit-soft:#F6E3E0;
+ --good:#356B4E;--good-soft:#DEEBE2;
+ --warn:#8A6410;--warn-soft:#F6EDD8;
+ --hd-bg:#16191A;--hd-fg:#F3F2EF;--hd-rule:rgba(243,242,239,.17);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --ground:#14181A;--surface:#1B2124;--surface-2:#232A2D;
+ --ink:#E9E7E1;--ink-2:#B3B7B6;--ink-3:#8A8F8E;
+ --rule:#2E3639;--rule-2:#3E484C;
+ --accent:#6FC0CE;--accent-soft:#17343A;
+ --crit:#E8887C;--crit-soft:#3A211E;
+ --good:#7FBE9B;--good-soft:#1B3128;
+ --warn:#D9AE55;--warn-soft:#332811;
+ --hd-bg:#232A2D;--hd-fg:#E9E7E1;--hd-rule:#3E484C;
+}}
+:root[data-theme="dark"]{
+ --ground:#14181A;--surface:#1B2124;--surface-2:#232A2D;
+ --ink:#E9E7E1;--ink-2:#B3B7B6;--ink-3:#8A8F8E;
+ --rule:#2E3639;--rule-2:#3E484C;
+ --accent:#6FC0CE;--accent-soft:#17343A;
+ --crit:#E8887C;--crit-soft:#3A211E;
+ --good:#7FBE9B;--good-soft:#1B3128;
+ --warn:#D9AE55;--warn-soft:#332811;
+ --hd-bg:#232A2D;--hd-fg:#E9E7E1;--hd-rule:#3E484C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ground);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;
+ font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 26px}
+h1,h2,h3,.lbl,button,.chip,th{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+.mono,.val,.asin,.sku,.bytes,code{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.lbl{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.lbl.crit{color:var(--crit)} .lbl.good{color:var(--good)}
+header{background:var(--surface);border-bottom:2px solid var(--ink)}
+.mast{padding:40px 0 28px}
+.mast .lbl{color:var(--accent)}
+h1{font-size:clamp(29px,4.4vw,46px);font-weight:800;letter-spacing:-.026em;line-height:1.04;
+ margin-top:13px;max-width:20ch;text-wrap:balance}
+.sub{font-size:18px;color:var(--ink-2);max-width:64ch;margin-top:16px}
+.stats{background:var(--hd-bg);color:var(--hd-fg)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));border-left:1px solid var(--hd-rule)}
+.scell{padding:22px 22px;border-right:1px solid var(--hd-rule)}
+.scell .lbl{color:inherit;opacity:.6;margin-bottom:8px}
+.scell b{font-family:Archivo,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.03em;
+ line-height:1;display:block;font-variant-numeric:tabular-nums}
+.scell p{font-size:13.5px;line-height:1.42;opacity:.76;margin-top:8px}
+section{padding:46px 0;border-top:1px solid var(--rule)}
+h2{font-size:25px;font-weight:700;letter-spacing:-.02em;margin-bottom:14px;text-wrap:balance}
+section>p{max-width:70ch;margin-bottom:14px;color:var(--ink-2)}
+section>p:last-child{margin-bottom:0}
+strong{color:var(--ink);font-weight:600}
+.why{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:26px}
+@media(min-width:820px){.why{grid-template-columns:repeat(3,1fr)}}
+.why div{background:var(--surface);padding:22px}
+.why h3{font-size:16px;font-weight:700;letter-spacing:-.008em;margin-bottom:9px}
+.why p{font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.why .lbl{display:block;margin-bottom:10px}
+.excl{border:1px solid var(--warn);background:var(--warn-soft);padding:20px 22px;margin-top:26px}
+.excl .lbl{color:var(--warn);display:block;margin-bottom:11px}
+.excl ul{list-style:none;display:grid;gap:9px}
+.excl li{font-size:14.5px;color:var(--ink-2);padding-left:18px;position:relative;line-height:1.5}
+.excl li::before{content:"—";position:absolute;left:0;color:var(--warn)}
+.excl code{font-size:13px;color:var(--ink);background:var(--surface);padding:1px 5px;border:1px solid var(--rule)}
+.toolbar{position:sticky;top:0;z-index:20;background:var(--ground);border-bottom:1px solid var(--rule-2);
+ padding:13px 0;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+button.f{background:var(--surface);border:1px solid var(--rule-2);color:var(--ink-2);
+ font-size:12.5px;font-weight:600;padding:7px 12px;cursor:pointer;letter-spacing:.005em}
+button.f span{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.6;margin-left:5px}
+button.f:hover{border-color:var(--accent);color:var(--accent)}
+button.f.on{background:var(--accent);border-color:var(--accent);color:var(--ground)}
+:root[data-theme="dark"] button.f.on,:root:not([data-theme="light"]) button.f.on{color:#14181A}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]) button.f.on{color:var(--ground)}}
+.count{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3)}
+.rows{display:grid;gap:14px;padding:22px 0 60px}
+.row{border:1px solid var(--rule);background:var(--surface)}
+.row.hide{display:none}
+.row-hd{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+ padding:13px 18px;border-bottom:1px solid var(--rule);background:var(--surface-2)}
+.ids{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.asin{font-size:13.5px;font-weight:600;color:var(--ink)}
+.sku{font-size:12px;color:var(--ink-3)}
+.chip{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+ padding:3px 8px;background:var(--accent-soft);color:var(--accent)}
+.chip.sz{background:transparent;border:1px solid var(--rule-2);color:var(--ink-3)}
+.bytes{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;
+ font-variant-numeric:tabular-nums}
+.b-old{color:var(--crit);text-decoration:line-through;text-decoration-thickness:1px}
+.b-new{color:var(--good)}
+.arrow{color:var(--ink-3)}
+.row-bd{display:grid;gap:1px;background:var(--rule)}
+@media(min-width:900px){.row-bd{grid-template-columns:1fr 1fr}}
+.pane{background:var(--surface);padding:16px 18px}
+.pane-hd{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px}
+.val{font-size:12.5px;line-height:1.62;color:var(--ink-2);word-break:break-word}
+.pane.new .val{color:var(--ink)}
+.sel{user-select:all}
+button.copy{background:transparent;border:1px solid var(--rule-2);color:var(--ink-3);
+ font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;cursor:pointer}
+button.copy:hover{border-color:var(--good);color:var(--good)}
+button.copy.done{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+.probs{list-style:none;margin-top:13px;padding-top:12px;border-top:1px solid var(--rule);display:grid;gap:5px}
+.probs li{font-family:"Source Serif 4",Georgia,serif;font-size:13.5px;color:var(--crit);
+ padding-left:15px;position:relative;line-height:1.45}
+.probs li::before{content:"×";position:absolute;left:0;font-weight:700}
+footer{border-top:2px solid var(--ink);padding:30px 0 50px;font-family:"IBM Plex Mono",monospace;
+ font-size:12px;color:var(--ink-3);line-height:1.75}
+footer p{max-width:76ch}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="wrap mast">
+  <span class="lbl">Backend search terms &middot; rebuild &middot; 26 August 2026</span>
+  <h1>Thirty-one ASINs with a keyword field Amazon never reads</h1>
+  <p class="sub">Every <code>generic_keywords</code> field in the MioTetto catalogue that breaches the
+   249-byte cap, rebuilt. Over the cap Amazon does not truncate the overflow &mdash; it drops the whole
+   field from the index, which is why a dead field looks identical to a working one in Seller Central.</p>
+ </div>
+</header>
+
+<div class="stats">
+ <div class="wrap">
+  <div class="sgrid">
+   <div class="scell"><span class="lbl">ASINs affected</span><b>31</b><p>of 40 in the catalogue</p></div>
+   <div class="scell"><span class="lbl">SKU rows</span><b>38</b><p>one ASIN can carry several, each needs its own fix</p></div>
+   <div class="scell"><span class="lbl">Median before</span><b>479 B</b><p>worst 500 &mdash; exactly 2.0&times; the limit</p></div>
+   <div class="scell"><span class="lbl">Bytes reclaimed</span><b>9,133</b><p>all rows now 202&ndash;249 bytes</p></div>
+  </div>
+ </div>
+</div>
+
+<div class="wrap">
+<section>
+ <h2>What changed, beyond the byte count</h2>
+ <p>Trimming to fit would have kept the real defects. Reading the fields turned up four problems that
+  cost more than the overflow did.</p>
+ <div class="why">
+  <div>
+   <span class="lbl crit">Removed</span>
+   <h3>Competitor brand names</h3>
+   <p>The quilted mats were buying <code>baby einstein</code>, <code>baby einstein toys</code> and
+    <code>fisher price play mat</code>. Baby Einstein is rank 3 on the board at 5.38% share. That traffic
+    is not addressable by your listing. The playards carried <code>harppa baby playpen</code>.</p>
+  </div>
+  <div>
+   <span class="lbl crit">Removed</span>
+   <h3>Terms for a different product</h3>
+   <p>All four playard ASINs &mdash; two mesh, two wooden &mdash; carried the identical 499-byte block, so
+    the breathable-mesh playpens were indexed for seven <code>wooden</code> and <code>wood</code> variants.
+    The same shared-block habit as the bullets.</p>
+  </div>
+  <div>
+   <span class="lbl crit">Removed</span>
+   <h3>Spanish, artifacts and contradictions</h3>
+   <p><code>tapete para bebes</code>, <code>corrales para bebes</code> and <code>corral para bebe</code> on
+    US listings. <code>baby registry search gift registry by name</code> is a search query, not a keyword.
+    Fields carried both <code>0-6 months</code> and <code>6-12 months</code>, and the 74&times;74 mat carried
+    <code>50x50 playpen mat</code>.</p>
+  </div>
+ </div>
+
+ <h2 style="margin-top:44px">Why the rebuilt fields are single words</h2>
+ <p>Amazon's lexical index matches token combinations, so
+  <code>foam floor tiles; foam mat; interlocking foam tiles; foam tiles</code> spends the word
+  <strong>foam</strong> four times and buys nothing extra. A deduplicated token set covers the same phrases
+  in roughly a third of the bytes. Words already in the title are excluded too &mdash; they are indexed from
+  the title, and repeating them is spent capacity. That is where most of the reclaimed bytes came from,
+  not from dropping terms.</p>
+
+ <div class="excl">
+  <span class="lbl">Deliberately not included &mdash; and two things needing your sign-off</span>
+  <ul>
+   <li><code>washable</code> carries 32% of board click share. The listings say &ldquo;wipes clean&rdquo;,
+    never machine-washable. Not ours to claim.</li>
+   <li><code>thick</code> carries 48% of board share. This mat is 0.4in against a 1.3in reference product
+    in the niche &mdash; a fight lost on the detail page.</li>
+   <li><code>waterproof</code> and <code>reversible</code> on the quilted mats: that group's copy never
+    makes either claim.</li>
+   <li>Finished dimensions on the tile mats: the flat file gives 48&times;48, 50.4&times;50.4 and 12.4in
+    tiles for the same product. Do not index a number nobody has verified.</li>
+   <li><strong>Sign-off 1.</strong> <code>tummy time</code> carries 33% of board click share and the
+    quilted-mat group never claims it. One line in the bullets would legitimize it in the backend. That is
+    a new claim, so it is your call.</li>
+   <li><strong>Sign-off 2.</strong> Confirm the mesh playards genuinely fold before anyone re-adds
+    <code>foldable</code> &mdash; their copy does not currently say so.</li>
+  </ul>
+ </div>
+</section>
+</div>
+
+<div class="toolbar">
+ <div class="wrap" style="display:flex;gap:9px;flex-wrap:wrap;align-items:center;width:100%">
+  <button class="f on" type="button" data-g="all">All rows <span>38</span></button>
+  <button class="f" type="button" data-g="PUZZLES">Interlocking tile mats <span>19</span></button><button class="f" type="button" data-g="MATTRESS">Quilted playpen mats <span>12</span></button><button class="f" type="button" data-g="BABY_PRODUCT">Foldable mats <span>2</span></button><button class="f" type="button" data-g="PLAYARD_MESH">Mesh playards <span>2</span></button><button class="f" type="button" data-g="PLAYARD_WOOD">Wooden playards <span>2</span></button><button class="f" type="button" data-g="WRITING_BOARD">Chalkboard roll <span>1</span></button>
+  <span class="count" id="count"></span>
+ </div>
+</div>
+
+<div class="wrap">
+ <div class="rows" id="rows">
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B08MNPT3CT</span>
+      <span class="sku">8A-IVDQ-Y5VX</span>
+      <span class="chip">Interlocking tile mats</span>
+      
+    </div>
+    <div class="bytes">
+      <span class="b-old">471 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 50x50 playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>51 repeated words</li><li>carries both age windows</li><li>14 words already in the title</li><li>471 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B08MNR3QFK</span>
+      <span class="sku">06-FU07-G4FX</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">36 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">498 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; tummy time mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 50x50 playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby tummy time play mat; baby floor mat</p>
+      <ul class="probs"><li>54 repeated words</li><li>carries both age windows</li><li>13 words already in the title</li><li>498 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B08MNR3QFK</span>
+      <span class="sku">C7-5T1U-5DDQ</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">36 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">500 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">foam floor tiles; foam mat; interlocking foam tiles; interlocking foam mats; foam tiles; foam puzzle floor mat; foam floor mats; foam floor tiles for kids; foam mats; puzzle mats for floor; foam tiles for floor baby; baby rug; foam tiles for floor; puzzle floor mat tiles; mats for kids; foam tiles for floor gym; foam tiles 24x24; foam tiles for kids; foam tiles alphabet; foam tiles for wall; foam tiles for floor kids; play mat tiles; foam squares floor mat; foam flooring; playing; toddler; child</p>
+      <ul class="probs"><li>64 repeated words</li><li>9 words already in the title</li><li>500 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B08MNR3QFK</span>
+      <span class="sku">PPM-PPB-36T</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">36 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">498 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; tummy time mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 50x50 playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby tummy time play mat; baby floor mat</p>
+      <ul class="probs"><li>54 repeated words</li><li>carries both age windows</li><li>13 words already in the title</li><li>498 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B08MNR49T7</span>
+      <span class="sku">0P-RXUM-GD9M</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">16 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">494 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">foam floor tiles; foam mat; interlocking foam tiles; interlocking foam mats; foam tiles; foam puzzle floor mat; foam floor mats; foam floor tiles for kids; foam mats; puzzle mats for floor; foam tiles for floor baby; baby rug; foam tiles for floor; puzzle play mat; puzzle play mat for baby; puzzle play mats for floor large; puzzle play matt; puzzle play mat for baby 50x50; puzzle play mat big; puzzle play mat beige; puzzle play mat pink; puzzle play mat for kids; puzzle play mats for floor</p>
+      <ul class="probs"><li>69 repeated words</li><li>10 words already in the title</li><li>494 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B08MNR49T7</span>
+      <span class="sku">NL-DV5G-DPPP</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">16 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">471 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 50x50 playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>51 repeated words</li><li>carries both age windows</li><li>14 words already in the title</li><li>471 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B08MNR49T7</span>
+      <span class="sku">PPM-PPB-16T</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">16 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">475 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 48&quot; x 48&quot; playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>52 repeated words</li><li>carries both age windows</li><li>13 words already in the title</li><li>475 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B091XVLVYH</span>
+      <span class="sku">PPM-CGB-36T</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">36 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">473 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">play mat; playmat; kids rugs; indoor play mat; soft foam mat; floor tiles; interlocking tiles; padded play mat; playroom flooring; colorful floor mat; game mat for kids; soft floor covering; living room mat; toddler mat; educational mat; activity floor tiles; modular play mat; carpet tiles; fun flooring; activity area mat; soft rug; floor padding; floor mat for room; kids activity rug; play area rug; modular foam mat; play surface; safe floor mat; play carpet; room rug</p>
+      <ul class="probs"><li>45 repeated words</li><li>11 words already in the title</li><li>473 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B091XVLVYH</span>
+      <span class="sku">RC-O5XI-3HYU</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">36 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">473 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">play mat; playmat; kids rugs; indoor play mat; soft foam mat; floor tiles; interlocking tiles; padded play mat; playroom flooring; colorful floor mat; game mat for kids; soft floor covering; living room mat; toddler mat; educational mat; activity floor tiles; modular play mat; carpet tiles; fun flooring; activity area mat; soft rug; floor padding; floor mat for room; kids activity rug; play area rug; modular foam mat; play surface; safe floor mat; play carpet; room rug</p>
+      <ul class="probs"><li>45 repeated words</li><li>11 words already in the title</li><li>473 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B091YKYFPX</span>
+      <span class="sku">DE-TE58-EO4K</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">16 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">477 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">play mat; playmat; kids play mat; playroom rug; playroom decor; foam floor tiles; interlocking foam tiles; carpet tiles; carpet squares; rainbow rug; floor mat; soft mat; game mat; exercise mat; toddler play area; living room rug; nursery rug; soft flooring; educational play area; indoor activity mat; colorful rug; non-slip mat; room mat; floor padding; kids rug; modular floor tiles; activity floor mat; padded mat; play area flooring; fun rug; game floor mat; classroom mat</p>
+      <ul class="probs"><li>41 repeated words</li><li>9 words already in the title</li><li>477 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B091YKYFPX</span>
+      <span class="sku">PPM-CGB-16T</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">16 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">475 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 48&quot; x 48&quot; playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>52 repeated words</li><li>carries both age windows</li><li>13 words already in the title</li><li>475 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0BL23CLLB</span>
+      <span class="sku">I2-I0JI-9X1I</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">36 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">473 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">play mat; playmat; kids rugs; indoor play mat; soft foam mat; floor tiles; interlocking tiles; padded play mat; playroom flooring; colorful floor mat; game mat for kids; soft floor covering; living room mat; toddler mat; educational mat; activity floor tiles; modular play mat; carpet tiles; fun flooring; activity area mat; soft rug; floor padding; floor mat for room; kids activity rug; play area rug; modular foam mat; play surface; safe floor mat; play carpet; room rug</p>
+      <ul class="probs"><li>45 repeated words</li><li>11 words already in the title</li><li>473 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0BL23CLLB</span>
+      <span class="sku">PPM-PCEI-36T</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">36 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">473 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">246 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">play mat; playmat; kids rugs; indoor play mat; soft foam mat; floor tiles; interlocking tiles; padded play mat; playroom flooring; colorful floor mat; game mat for kids; soft floor covering; living room mat; toddler mat; educational mat; activity floor tiles; modular play mat; carpet tiles; fun flooring; activity area mat; soft rug; floor padding; floor mat for room; kids activity rug; play area rug; modular foam mat; play surface; safe floor mat; play carpet; room rug</p>
+      <ul class="probs"><li>45 repeated words</li><li>11 words already in the title</li><li>473 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0FMZFBRXY</span>
+      <span class="sku">PPM-PPB-9T-stickerless</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">9 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">479 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">248 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 36.5&quot; x 36.5&quot; playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>52 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>479 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0FMZHHBF6</span>
+      <span class="sku">PPM-PCEI-9T-stickerless</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">9 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">479 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">248 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 36.5&quot; x 36.5&quot; playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>52 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>479 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0FMZJ1BHH</span>
+      <span class="sku">PPM-CAPG-9T-stickerless</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">9 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">479 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">248 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 36.5&quot; x 36.5&quot; playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>52 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>479 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0FMZRRJJ8</span>
+      <span class="sku">PPM-BBB-9T-stickerless</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">9 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">479 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">248 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 36.5&quot; x 36.5&quot; playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>52 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>479 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0FN169GR1</span>
+      <span class="sku">PPM-CGB-9T-stickerless</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">9 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">479 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">248 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 36.5&quot; x 36.5&quot; playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>52 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>479 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PUZZLES">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0FS7ZL8LL</span>
+      <span class="sku">PPM-CCGB-9T</span>
+      <span class="chip">Interlocking tile mats</span>
+      <span class="chip sz">9 Tiles</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">479 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">248 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; playroom decor; foam floor tiles; baby play mats for floor; carpet tiles; baby gym; playroom rug; playmate for baby; playmat; play mat for babies 6-12 months; foam mat; baby mat; carpet squares; baby floor play mat; playroom; 36.5&quot; x 36.5&quot; playpen mat; baby gyms &amp; playmats; baby activity mat; interlocking foam tiles; kids rugs; rainbow rug; kids play mat; baby play mat; baby floor mat</p>
+      <ul class="probs"><li>52 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>479 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix">Copy</button>
+      </div>
+      <p class="val mono sel">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living borders border edging mix</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860005693597</span>
+      <span class="sku">CM-LO-LG</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">73&quot; x 73&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">249 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>5 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft little">Copy</button>
+      </div>
+      <p class="val mono sel">73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft little</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865404</span>
+      <span class="sku">CM-CE-SL</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">50&quot; x 50&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">247 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>5 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="50x50 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft cozy">Copy</button>
+      </div>
+      <p class="val mono sel">50x50 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft cozy</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865411</span>
+      <span class="sku">CM-PP-SL</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">50&quot; x 50&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">220 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="50x50 pad padded cushion cushioned rug nursery playroom decor infant infants toddler activity gym area protector flooring room living foldable playmate mats kids child children home apartment crawl thickness comfort pals">Copy</button>
+      </div>
+      <p class="val mono sel">50x50 pad padded cushion cushioned rug nursery playroom decor infant infants toddler activity gym area protector flooring room living foldable playmate mats kids child children home apartment crawl thickness comfort pals</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865428</span>
+      <span class="sku">CM-DS-SL</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">50&quot; x 50&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">249 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>5 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="50x50 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft dreamy">Copy</button>
+      </div>
+      <p class="val mono sel">50x50 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft dreamy</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865435</span>
+      <span class="sku">CM-SJ-SL</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">50&quot; x 50&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">249 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>5 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="50x50 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft spring">Copy</button>
+      </div>
+      <p class="val mono sel">50x50 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft spring</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865442</span>
+      <span class="sku">CM-LO-SL</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">50&quot; x 50&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">228 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="50x50 pad padded cushion cushioned rug nursery playroom decor infant infants toddler activity gym area protector flooring room living foldable playmate mats kids child children home apartment crawl thickness comfort little oasis">Copy</button>
+      </div>
+      <p class="val mono sel">50x50 pad padded cushion cushioned rug nursery playroom decor infant infants toddler activity gym area protector flooring room living foldable playmate mats kids child children home apartment crawl thickness comfort little oasis</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865459</span>
+      <span class="sku">CM-SF-SL</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">50&quot; x 50&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">226 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="50x50 pad padded cushion cushioned rug nursery playroom decor infant infants toddler activity gym area protector flooring room living foldable playmate mats kids child children home apartment crawl thickness comfort safari fun">Copy</button>
+      </div>
+      <p class="val mono sel">50x50 pad padded cushion cushioned rug nursery playroom decor infant infants toddler activity gym area protector flooring room living foldable playmate mats kids child children home apartment crawl thickness comfort safari fun</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865466</span>
+      <span class="sku">CM-CE-LG</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">73&quot; x 73&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">247 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>5 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft cozy">Copy</button>
+      </div>
+      <p class="val mono sel">73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft cozy</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865473</span>
+      <span class="sku">CM-PP-LG</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">73&quot; x 73&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">220 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>9 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="73x73 pad padded cushion cushioned rug nursery playroom decor infant infants toddler activity gym area protector flooring room living foldable playmate mats kids child children home apartment crawl thickness comfort pals">Copy</button>
+      </div>
+      <p class="val mono sel">73x73 pad padded cushion cushioned rug nursery playroom decor infant infants toddler activity gym area protector flooring room living foldable playmate mats kids child children home apartment crawl thickness comfort pals</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865480</span>
+      <span class="sku">CM-DS-LG</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">73&quot; x 73&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">249 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>5 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft dreamy">Copy</button>
+      </div>
+      <p class="val mono sel">73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft dreamy</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014865497</span>
+      <span class="sku">CM-SJ-LG</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">73&quot; x 73&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">249 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>5 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft spring">Copy</button>
+      </div>
+      <p class="val mono sel">73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft spring</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="MATTRESS">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014867910</span>
+      <span class="sku">CM-SF-LG</span>
+      <span class="chip">Quilted playpen mats</span>
+      <span class="chip sz">73&quot; x 73&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">483 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">249 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby; baby toys; baby play mat; baby toy;  play mat; baby registry search gift registry by name; baby einstein toys; infant toys; baby mat for floor; playmat; baby play gym; bebe; baby mat; baby einstein; play mat for babies 0-6 months; fisher price play mat; baby gym; baby gifts for boys; baby play mats for floor; 50x50 playpen mat; muscle mat; play mat for babies 6-12 months; baby floor play mat; playmat for babies; foam play mat; baby playmat; baby floor mat; playpen mattress</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>a rival&#x27;s product name</li><li>competitor brand — Baby Einstein</li><li>competitor brand — Fisher-Price</li><li>search-query artifact, not a keyword</li><li>53 repeated words</li><li>carries both age windows</li><li>5 words already in the title</li><li>483 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft safari">Copy</button>
+      </div>
+      <p class="val mono sel">73x73 quilted pad padded cushion cushioned rug nursery playroom decor infant infants toddler toddlers activity gym area foam non slip protector flooring room living portable foldable playmate mats kids child children home apartment crawl soft safari</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="BABY_PRODUCT">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014505188</span>
+      <span class="sku">FM-MS</span>
+      <span class="chip">Foldable mats</span>
+      <span class="chip sz">78&quot; x 59&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">454 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">249 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; baby play mats for floor; baby gym; playmat; playmate for baby; play mat for babies 6-12 months; baby mat; baby floor play mat; 50x50 playpen mat; baby activity mat; foam play mat; play mats for floor; tapete para bebes; kids play mat; baby playmat; foldable mat; folding exercise mat; folding gym mat; foldable floor mat; foldable exercise mat; foldable gym mat</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>55 repeated words</li><li>carries both age windows</li><li>4 words already in the title</li><li>454 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="78x59 folding fold portable travel carry bag reversible waterproof infant infants toddler toddlers activity gym area rug nursery playroom decor cushion cushioned padded protector flooring room living extra large mats playmate kids child children bpa">Copy</button>
+      </div>
+      <p class="val mono sel">78x59 folding fold portable travel carry bag reversible waterproof infant infants toddler toddlers activity gym area rug nursery playroom decor cushion cushioned padded protector flooring room living extra large mats playmate kids child children bpa</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="BABY_PRODUCT">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">860014505195</span>
+      <span class="sku">FM-AW</span>
+      <span class="chip">Foldable mats</span>
+      <span class="chip sz">78&quot; x 59&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">454 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">249 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby play mat; play mat; baby play gym; baby mat for floor; play mat for babies 0-6 months; baby play mats for floor; baby gym; playmat; playmate for baby; play mat for babies 6-12 months; baby mat; baby floor play mat; 50x50 playpen mat; baby activity mat; foam play mat; play mats for floor; tapete para bebes; kids play mat; baby playmat; foldable mat; folding exercise mat; folding gym mat; foldable floor mat; foldable exercise mat; foldable gym mat</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>55 repeated words</li><li>carries both age windows</li><li>4 words already in the title</li><li>454 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="78x59 folding fold portable travel carry bag reversible waterproof infant infants toddler toddlers activity gym area rug nursery playroom decor cushion cushioned padded protector flooring room living extra large mats playmate kids child children bpa">Copy</button>
+      </div>
+      <p class="val mono sel">78x59 folding fold portable travel carry bag reversible waterproof infant infants toddler toddlers activity gym area rug nursery playroom decor cushion cushioned padded protector flooring room living extra large mats playmate kids child children bpa</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PLAYARD_MESH">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0DRPLF5PG</span>
+      <span class="sku">MT-PP-NCL</span>
+      <span class="chip">Mesh playards</span>
+      <span class="chip sz">Large (74x74)</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">499 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">220 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby playpen; playpen; play pen; playpen for babies and toddlers; baby play pen; corrales para bebes; play pen for babies 6-12 months; foldable playpen; play pen for toddlers 1-3; baby fence; baby play yard; baby playpen with mat; play yard; baby gate playpen; wooden playpen; play yard for baby; portable playpen; playpen with mat; 50x50 playpen; corral para bebe; baby playards; wood playpen; wooden baby playpen; wooden play pen; harppa baby playpen; wood baby playpen; wood play pen; baby wooden</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>competitor brand — Harppa</li><li>wrong product — sat on the mesh playards</li><li>52 repeated words</li><li>12 words already in the title</li><li>499 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="74x74 playard playards fence enclosure barrier safety infant infants toddler activity center area room divider guard kids child children home apartment nursery playroom crawl small compact enclosed visibility secure grey">Copy</button>
+      </div>
+      <p class="val mono sel">74x74 playard playards fence enclosure barrier safety infant infants toddler activity center area room divider guard kids child children home apartment nursery playroom crawl small compact enclosed visibility secure grey</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PLAYARD_MESH">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0DRPNWSYC</span>
+      <span class="sku">MT-PP-NCC</span>
+      <span class="chip">Mesh playards</span>
+      <span class="chip sz">Compact (50x50)</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">499 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">220 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby playpen; playpen; play pen; playpen for babies and toddlers; baby play pen; corrales para bebes; play pen for babies 6-12 months; foldable playpen; play pen for toddlers 1-3; baby fence; baby play yard; baby playpen with mat; play yard; baby gate playpen; wooden playpen; play yard for baby; portable playpen; playpen with mat; 50x50 playpen; corral para bebe; baby playards; wood playpen; wooden baby playpen; wooden play pen; harppa baby playpen; wood baby playpen; wood play pen; baby wooden</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>competitor brand — Harppa</li><li>wrong product — sat on the mesh playards</li><li>52 repeated words</li><li>13 words already in the title</li><li>499 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="playard playards fence enclosure barrier safety infant infants toddler activity center area room divider guard kids child children home apartment nursery playroom crawl large small compact enclosed visibility secure grey">Copy</button>
+      </div>
+      <p class="val mono sel">playard playards fence enclosure barrier safety infant infants toddler activity center area room divider guard kids child children home apartment nursery playroom crawl large small compact enclosed visibility secure grey</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PLAYARD_WOOD">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0FL39ZTLQ</span>
+      <span class="sku">MT-PP-NWC-Test</span>
+      <span class="chip">Wooden playards</span>
+      <span class="chip sz">Compact (50x50)</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">499 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">241 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby playpen; playpen; play pen; playpen for babies and toddlers; baby play pen; corrales para bebes; play pen for babies 6-12 months; foldable playpen; play pen for toddlers 1-3; baby fence; baby play yard; baby playpen with mat; play yard; baby gate playpen; wooden playpen; play yard for baby; portable playpen; playpen with mat; 50x50 playpen; corral para bebe; baby playards; wood playpen; wooden baby playpen; wooden play pen; harppa baby playpen; wood baby playpen; wood play pen; baby wooden</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>competitor brand — Harppa</li><li>wrong product — sat on the mesh playards</li><li>52 repeated words</li><li>15 words already in the title</li><li>499 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="50x50 yard playard playards enclosure barrier safety rail rails slat slats panels pine chemical free smooth surface infant infants toddler area room divider guard kids child children home apartment nursery playroom crawl compact sturdy brown">Copy</button>
+      </div>
+      <p class="val mono sel">50x50 yard playard playards enclosure barrier safety rail rails slat slats panels pine chemical free smooth surface infant infants toddler area room divider guard kids child children home apartment nursery playroom crawl compact sturdy brown</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="PLAYARD_WOOD">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B0FL3D4YSS</span>
+      <span class="sku">MT-PP-NWL-Test</span>
+      <span class="chip">Wooden playards</span>
+      <span class="chip sz">Large (74x74)</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">499 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">241 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">baby playpen; playpen; play pen; playpen for babies and toddlers; baby play pen; corrales para bebes; play pen for babies 6-12 months; foldable playpen; play pen for toddlers 1-3; baby fence; baby play yard; baby playpen with mat; play yard; baby gate playpen; wooden playpen; play yard for baby; portable playpen; playpen with mat; 50x50 playpen; corral para bebe; baby playards; wood playpen; wooden baby playpen; wooden play pen; harppa baby playpen; wood baby playpen; wood play pen; baby wooden</p>
+      <ul class="probs"><li>Spanish on a US listing</li><li>competitor brand — Harppa</li><li>wrong product — sat on the mesh playards</li><li>52 repeated words</li><li>15 words already in the title</li><li>499 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="74x74 yard playard playards enclosure barrier safety rail rails slat slats panels pine chemical free smooth surface infant infants toddler area room divider guard kids child children home apartment nursery playroom crawl compact sturdy brown">Copy</button>
+      </div>
+      <p class="val mono sel">74x74 yard playard playards enclosure barrier safety rail rails slat slats panels pine chemical free smooth surface infant infants toddler area room divider guard kids child children home apartment nursery playroom crawl compact sturdy brown</p>
+    </div>
+  </div>
+</article>
+
+<article class="row" data-group="WRITING_BOARD">
+  <div class="row-hd">
+    <div class="ids">
+      <span class="asin">B08MJ3SQ8Q</span>
+      <span class="sku">81-W5FE-I364</span>
+      <span class="chip">Chalkboard roll</span>
+      <span class="chip sz">17.7&quot; x 78.7&quot;</span>
+    </div>
+    <div class="bytes">
+      <span class="b-old">498 B</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="b-new">202 B</span>
+    </div>
+  </div>
+  <div class="row-bd">
+    <div class="pane old">
+      <div class="pane-hd"><span class="lbl crit">Live &mdash; de-indexed</span></div>
+      <p class="val">chalkboard wallpaper stick and peel; chalk wallpaper peel and stick; chalkboard wallpaper; chalkboard contact paper; chalkboard paper; chalk wall; chalk wallpaper; chalkboard wallpaper peel and stick; peel and stick chalkboard wallpaper; chalk paper; peel and stick chalkboard; chalkboard contact paper peel and stick; chalkboard paper roll; chalkboard vinyl; chalkboard peel and stick wallpaper; chalk paper roll; chalkboard contact paper; magnetic black chalkboard; vinyl chalk board; chalk paint</p>
+      <ul class="probs"><li>52 repeated words</li><li>10 words already in the title</li><li>498 bytes &mdash; whole field dropped from the index</li></ul>
+    </div>
+    <div class="pane new">
+      <div class="pane-hd">
+        <span class="lbl good">Rebuilt &mdash; indexed</span>
+        <button class="copy" type="button" data-v="removable sticker decals self peel stick chalkboards liner cover surface classroom kitchen pantry menu craft marker kids playroom home office nursery mural backdrop labels jars cafe reusable matte black">Copy</button>
+      </div>
+      <p class="val mono sel">removable sticker decals self peel stick chalkboards liner cover surface classroom kitchen pantry menu craft marker kids playroom home office nursery mural backdrop labels jars cafe reusable matte black</p>
+    </div>
+  </div>
+</article>
+ </div>
+</div>
+
+<footer>
+ <div class="wrap">
+  <p>Generated 26 August 2026 from Category+Listings+Report_08-25-2026.xlsm. <strong>Nothing has been
+   uploaded.</strong> The rebuilt value maps to <code>generic_keywords</code> in the category flat file,
+   keyed on Seller SKU. Three ASINs carry more than one SKU row and each needs its own update &mdash; the
+   breach can sit on the row you did not read. Re-run <code>clr_read.py CLR.xlsm sweep</code> after upload
+   to confirm. Two SKUs are named MT-PP-NWC-Test and MT-PP-NWL-Test and are Active; worth a look.</p>
+ </div>
+</footer>
+
+<script>
+(function(){
+  var rows=[].slice.call(document.querySelectorAll('.row'));
+  var btns=[].slice.call(document.querySelectorAll('button.f'));
+  var count=document.getElementById('count');
+  function show(g){
+    var n=0;
+    rows.forEach(function(r){
+      var on=(g==='all'||r.dataset.group===g);
+      r.classList.toggle('hide',!on); if(on)n++;
+    });
+    count.textContent=n+' of '+rows.length+' rows shown';
+    btns.forEach(function(b){b.classList.toggle('on',b.dataset.g===g);});
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.g);});});
+  show('all');
+
+  document.addEventListener('click',function(ev){
+    var b=ev.target.closest('button.copy'); if(!b)return;
+    var v=b.dataset.v, done=function(){
+      var t=b.textContent; b.textContent='Copied'; b.classList.add('done');
+      setTimeout(function(){b.textContent=t;b.classList.remove('done');},1400);
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(v).then(done,fallback);
+    } else fallback();
+    function fallback(){
+      var ta=document.createElement('textarea');ta.value=v;ta.style.position='fixed';
+      ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done();}catch(e){}
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
+</body>
+</html>

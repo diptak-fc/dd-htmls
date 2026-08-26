@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MioTetto Tile Mat Audit — MioTetto B091YKYFPX</title>
+<style>*{margin:0;padding:0}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#F3F2EF;
+  --surface:#FFFFFF;
+  --surface-2:#EAE8E3;
+  --ink:#16191A;
+  --ink-2:#4A4F50;
+  --ink-3:#7E8180;
+  --rule:#D6D3CC;
+  --rule-2:#BFBBB2;
+  --accent:#0E4F5B;
+  --accent-soft:#DCE9EB;
+  --crit:#A93A30;
+  --crit-soft:#F6E3E0;
+  --warn:#8A6410;
+  --warn-soft:#F6EDD8;
+  --good:#356B4E;
+  --good-soft:#DEEBE2;
+  --verdict-bg:#16191A; --verdict-fg:#F3F2EF; --verdict-rule:rgba(243,242,239,.17);
+  --maxw:1180px;
+  --col:68ch;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#14181A; --surface:#1B2124; --surface-2:#232A2D;
+    --ink:#E9E7E1; --ink-2:#B3B7B6; --ink-3:#8A8F8E;
+    --rule:#2E3639; --rule-2:#3E484C;
+    --accent:#6FC0CE; --accent-soft:#17343A;
+    --crit:#E8887C; --crit-soft:#3A211E;
+    --warn:#D9AE55; --warn-soft:#332811;
+    --good:#7FBE9B; --good-soft:#1B3128;
+    --verdict-bg:#232A2D; --verdict-fg:#E9E7E1; --verdict-rule:#3E484C;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#14181A; --surface:#1B2124; --surface-2:#232A2D;
+  --ink:#E9E7E1; --ink-2:#B3B7B6; --ink-3:#8A8F8E;
+  --rule:#2E3639; --rule-2:#3E484C;
+  --accent:#6FC0CE; --accent-soft:#17343A;
+  --crit:#E8887C; --crit-soft:#3A211E;
+  --warn:#D9AE55; --warn-soft:#332811;
+  --good:#7FBE9B; --good-soft:#1B3128;
+  --verdict-bg:#232A2D; --verdict-fg:#E9E7E1; --verdict-rule:#3E484C;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"Source Serif 4",Georgia,serif;
+  font-size:17px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  margin:0;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+/* ── type roles ─────────────────────────────────────────── */
+h1,h2,h3,h4,.lbl,.stat-n,.num,nav,th{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+h1,h2,h3{text-wrap:balance;margin:0}
+.lbl{
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);
+}
+code,.mono,.byte-n,.verb{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ── masthead ───────────────────────────────────────────── */
+header{
+  border-bottom:2px solid var(--ink);
+  background:var(--surface);
+}
+.mast{padding:44px 0 30px}
+.mast .lbl{color:var(--accent)}
+h1{
+  font-size:clamp(34px,5.2vw,58px);font-weight:800;letter-spacing:-.028em;
+  line-height:1.02;margin:14px 0 0;max-width:19ch;
+}
+.sub{
+  font-size:19px;color:var(--ink-2);max-width:60ch;margin:18px 0 0;
+}
+.meta{
+  display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:26px;
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);
+}
+.meta b{color:var(--ink-2);font-weight:500}
+
+/* ── verdict strip ──────────────────────────────────────── */
+.verdict{background:var(--verdict-bg);color:var(--verdict-fg)}
+.vgrid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:0;border-left:1px solid var(--verdict-rule);
+}
+.vcell{padding:26px 24px;border-right:1px solid var(--verdict-rule)}
+.vcell .lbl{color:inherit;opacity:.62;margin-bottom:9px}
+.stat-n{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1;display:block}
+.vcell p{margin:9px 0 0;font-size:14px;line-height:1.45;opacity:.78}
+
+/* ── layout ─────────────────────────────────────────────── */
+main{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:1000px){
+  .wrap.split{display:grid;grid-template-columns:188px minmax(0,1fr);gap:56px;align-items:start}
+  .rail{position:sticky;top:26px;padding-top:64px}
+}
+.rail{display:none}
+@media(min-width:1000px){.rail{display:block}}
+.rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.rail a{
+  display:flex;gap:10px;padding:7px 0;font-family:Archivo,sans-serif;font-size:12.5px;
+  color:var(--ink-3);text-decoration:none;line-height:1.3;border-top:1px solid var(--rule);
+}
+.rail a:hover,.rail a:focus-visible{color:var(--accent)}
+.rail a span{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.7}
+
+section{padding:62px 0;border-top:1px solid var(--rule)}
+section:first-of-type{border-top:none}
+h2{
+  font-size:clamp(25px,3.2vw,34px);font-weight:700;letter-spacing:-.022em;
+  line-height:1.12;max-width:22ch;
+}
+.eyebrow{display:flex;align-items:baseline;gap:12px;margin-bottom:16px}
+.eyebrow .n{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;
+  color:var(--accent);letter-spacing:.06em;
+}
+p{max-width:var(--col)}
+section>p,.col>p{margin:18px 0 0}
+.lede{font-size:19.5px;line-height:1.55;color:var(--ink-2);max-width:62ch}
+
+/* ── rules block ────────────────────────────────────────── */
+.rules{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:34px}
+@media(min-width:760px){.rules{grid-template-columns:repeat(3,1fr)}}
+.rule{background:var(--surface);padding:26px 24px}
+.rule .lbl{color:var(--accent);margin-bottom:12px;display:block}
+.rule h3{font-size:17.5px;font-weight:700;letter-spacing:-.01em;line-height:1.28}
+.rule p{font-size:15px;margin-top:11px;color:var(--ink-2);line-height:1.5}
+
+/* ── the byte meter — the signature graphic ─────────────── */
+.meters{margin-top:34px;border:1px solid var(--rule);background:var(--surface)}
+.meters-hd{
+  padding:16px 22px;border-bottom:1px solid var(--rule);
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;
+}
+.meter{padding:17px 22px;border-bottom:1px solid var(--rule)}
+.meter:last-child{border-bottom:none}
+.meter-top{display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin-bottom:9px}
+.meter-id{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-2)}
+.byte-n{font-size:12.5px;font-weight:600;letter-spacing:.02em}
+.track{
+  position:relative;height:19px;background:var(--surface-2);
+  border:1px solid var(--rule);
+}
+.fill{
+  position:absolute;inset:0 auto 0 0;height:100%;
+  background:repeating-linear-gradient(135deg,var(--crit) 0 5px,transparent 5px 10px),var(--crit-soft);
+  border-right:2px solid var(--crit);
+}
+.fill.ok{
+  background:var(--good-soft);border-right:2px solid var(--good);
+}
+.cap{
+  position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);z-index:2;
+}
+.cap::after{
+  content:"249 B cap";position:absolute;left:7px;top:-16px;white-space:nowrap;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;color:var(--ink);
+  letter-spacing:.03em;
+}
+.meter.legend .cap::after{content:"249 B cap"}
+.meter:not(.legend) .cap::after{content:""}
+.dead{color:var(--crit);font-weight:600}
+.live{color:var(--good);font-weight:600}
+
+/* ── verbatim ───────────────────────────────────────────── */
+.verb{
+  display:block;background:var(--surface);border:1px solid var(--rule);
+  border-left:3px solid var(--accent);
+  padding:15px 18px;font-size:13.5px;line-height:1.6;color:var(--ink-2);
+  margin-top:20px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;
+  max-width:none;
+}
+.verb.bad{border-left-color:var(--crit)}
+.verb.good{border-left-color:var(--good)}
+.verb-cap{
+  font-family:Archivo,sans-serif;font-size:11px;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);margin-top:22px;display:block;
+}
+
+/* ── findings ladder ────────────────────────────────────── */
+.finds{margin-top:36px;border-top:1px solid var(--rule-2)}
+.find{
+  display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 20px;
+  padding:26px 0;border-bottom:1px solid var(--rule);align-items:start;
+}
+@media(min-width:760px){.find{grid-template-columns:60px minmax(0,1fr) 116px;gap:0 26px}}
+.find .num{
+  font-family:Archivo,sans-serif;font-size:27px;font-weight:800;color:var(--rule-2);
+  letter-spacing:-.03em;line-height:1;padding-top:2px;
+}
+.find h3{font-size:19px;font-weight:700;letter-spacing:-.012em;line-height:1.3}
+.find p{font-size:15.5px;margin-top:10px;color:var(--ink-2)}
+.sev{
+  justify-self:start;font-family:Archivo,sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;white-space:nowrap;
+  margin-top:3px;
+}
+@media(min-width:760px){.sev{justify-self:end}}
+.sev.s1{background:var(--crit-soft);color:var(--crit)}
+.sev.s2{background:var(--warn-soft);color:var(--warn)}
+.sev.s3{background:var(--accent-soft);color:var(--accent)}
+
+/* ── tables ─────────────────────────────────────────────── */
+.tbl-wrap{overflow-x:auto;margin-top:30px;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+th{
+  text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);padding:13px 16px;border-bottom:1px solid var(--rule-2);white-space:nowrap;
+}
+td{padding:11px 16px;border-bottom:1px solid var(--rule);color:var(--ink-2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.k{color:var(--ink);font-weight:600}
+td.n{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.us td{background:var(--accent-soft)}
+tr.us td.k,tr.us td{color:var(--ink)}
+.bar{display:inline-block;height:8px;background:var(--accent);vertical-align:middle;margin-right:8px;min-width:2px}
+
+/* ── the ten-tile score ─────────────────────────────────── */
+.score{margin-top:32px;display:grid;gap:26px}
+@media(min-width:720px){.score{grid-template-columns:1fr 1fr}}
+.score-card{border:1px solid var(--rule);background:var(--surface);padding:24px}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:16px 0 0;max-width:250px}
+.tile{
+  aspect-ratio:1;border:1px solid var(--rule-2);display:flex;align-items:center;
+  justify-content:center;font-family:"IBM Plex Mono",monospace;font-size:11px;
+  color:var(--ink-3);background:var(--surface-2);
+}
+.tile.on{background:var(--good-soft);border-color:var(--good);color:var(--good);font-weight:600}
+.tile.part{background:var(--warn-soft);border-color:var(--warn);color:var(--warn);font-weight:600}
+.score-card .stat-n{color:var(--ink);margin-top:14px}
+.score-card p{font-size:14.5px;margin-top:10px;color:var(--ink-2)}
+
+/* ── rewrite ────────────────────────────────────────────── */
+.ba{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:30px}
+@media(min-width:820px){.ba{grid-template-columns:1fr 1fr}}
+.ba-col{background:var(--surface);padding:24px}
+.ba-col .lbl{display:block;margin-bottom:14px}
+.ba-col.before .lbl{color:var(--crit)}
+.ba-col.after .lbl{color:var(--good)}
+.field{margin-bottom:20px}
+.field:last-child{margin-bottom:0}
+.field-n{
+  font-family:Archivo,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);display:flex;justify-content:space-between;
+  gap:10px;padding-bottom:6px;border-bottom:1px solid var(--rule);margin-bottom:9px;
+}
+.field-v{font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.62;color:var(--ink-2);word-break:break-word}
+.field-v.empty{color:var(--crit);font-style:italic}
+.ct{font-variant-numeric:tabular-nums}
+.ct.over{color:var(--crit)}
+.ct.under{color:var(--good)}
+
+.bullets{margin-top:26px;counter-reset:b}
+.bullet{
+  display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;padding:14px 0;
+  border-top:1px solid var(--rule);font-size:14.5px;line-height:1.55;color:var(--ink-2);
+}
+.bullet::before{
+  counter-increment:b;content:counter(b);font-family:"IBM Plex Mono",monospace;
+  font-size:11px;color:var(--ink-3);padding-top:3px;
+}
+.bullet strong{color:var(--ink);font-weight:600;font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.01em}
+
+.pass{
+  display:flex;align-items:center;gap:12px;margin-top:26px;padding:15px 20px;
+  background:var(--good-soft);border:1px solid var(--good);
+}
+.pass .mono{font-size:13px;color:var(--good);font-weight:600}
+.pass p{margin:0;font-size:14px;color:var(--ink-2);max-width:none}
+
+/* ── sequence ───────────────────────────────────────────── */
+.seq{margin-top:34px;border-left:2px solid var(--rule-2);padding-left:0}
+.step{position:relative;padding:0 0 34px 30px}
+.step:last-child{padding-bottom:0}
+.step::before{
+  content:"";position:absolute;left:-5px;top:7px;width:8px;height:8px;
+  background:var(--ground);border:2px solid var(--accent);
+}
+.step.hot::before{background:var(--crit);border-color:var(--crit)}
+.step .lbl{color:var(--accent);display:block;margin-bottom:7px}
+.step.hot .lbl{color:var(--crit)}
+.step h3{font-size:17.5px;font-weight:700;letter-spacing:-.01em}
+.step p{font-size:15px;margin-top:9px;color:var(--ink-2)}
+
+/* ── limits ─────────────────────────────────────────────── */
+.limits{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:30px}
+@media(min-width:700px){.limits{grid-template-columns:1fr 1fr}}
+.limit{background:var(--surface);padding:22px}
+.limit h3{font-size:15.5px;font-weight:700;letter-spacing:-.005em}
+.limit p{font-size:14.5px;margin-top:8px;color:var(--ink-2);line-height:1.5}
+.limit .lbl{display:block;margin-bottom:9px;color:var(--warn)}
+
+footer{
+  border-top:2px solid var(--ink);padding:34px 0 54px;margin-top:20px;
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);line-height:1.75;
+}
+footer p{max-width:74ch}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media (prefers-reduced-motion:no-preference){
+  .fill{animation:grow .8s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes grow{from{transform:scaleX(.02);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap mast">
+    <span class="lbl">Listing audit &middot; Amazon US &middot; 26 August 2026</span>
+    <h1>The tile mat is being found. It just isn&rsquo;t being read.</h1>
+    <p class="sub">MioTetto B091YKYFPX &mdash; 16-Tile Puzzle Play Mat, Cream-Gray-Beige. Audited against the
+      baby play mat niche board and the full 40-ASIN category listings report.</p>
+    <div class="meta">
+      <span><b>ASIN</b> B091YKYFPX</span>
+      <span><b>Niche</b> baby play mat &middot; 60 products &middot; 99.7% click coverage</span>
+      <span><b>Sources</b> CLR 08-25-2026 &middot; Opportunity Explorer 08-16-2026</span>
+    </div>
+  </div>
+</header>
+
+<div class="verdict">
+  <div class="wrap">
+    <div class="vgrid">
+      <div class="vcell">
+        <span class="lbl">Backend field</span>
+        <span class="stat-n tnum">477 B</span>
+        <p>Against a 249-byte cap. The whole field is dropped from the index, not truncated.</p>
+      </div>
+      <div class="vcell">
+        <span class="lbl">Title length</span>
+        <span class="stat-n tnum">200 ch</span>
+        <p>Cap is 75. Item Highlights &mdash; 125 searchable characters &mdash; stays locked until it complies.</p>
+      </div>
+      <div class="vcell">
+        <span class="lbl">Rating rank</span>
+        <span class="stat-n tnum">49 / 60</span>
+        <p>4.40 against a 4.59 board median, on the 5th-largest review base in the niche.</p>
+      </div>
+      <div class="vcell">
+        <span class="lbl">Catalogue exposure</span>
+        <span class="stat-n tnum">31 / 40</span>
+        <p>ASINs carrying a dead backend field. This is not a one-listing problem.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap split">
+  <nav class="rail" aria-label="Sections">
+    <ol>
+      <li><a href="#market"><span>01</span> The market</a></li>
+      <li><a href="#diagnosis"><span>02</span> Diagnosis</a></li>
+      <li><a href="#gate"><span>03</span> The gate</a></li>
+      <li><a href="#findings"><span>04</span> Findings</a></li>
+      <li><a href="#rewrite"><span>05</span> The rewrite</a></li>
+      <li><a href="#score"><span>06</span> Score</a></li>
+      <li><a href="#sequence"><span>07</span> Sequence</a></li>
+      <li><a href="#limits"><span>08</span> Limits</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- 01 ─────────────────────────────────────────────── -->
+  <section id="market">
+    <div class="eyebrow"><span class="n">01</span><span class="lbl">The market</span></div>
+    <h2>A one-piece-mat market, and MioTetto is the only tile product in it</h2>
+    <p class="lede">Of 60 titles on a board holding 99.7% of the niche&rsquo;s clicks, exactly one names
+      tiles, interlocking or puzzle construction. It&rsquo;s ours. That is 2% of board click share against
+      a category whose winning vocabulary is something else entirely.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Term in title</th><th>Products</th><th>Share of board clicks</th></tr></thead>
+        <tbody>
+          <tr><td class="k">playpen</td><td class="n">32 / 60</td><td class="n"><span class="bar" style="width:96px"></span>64.2%</td></tr>
+          <tr><td class="k">toddler</td><td class="n">30 / 60</td><td class="n"><span class="bar" style="width:90px"></span>59.8%</td></tr>
+          <tr><td class="k">foam</td><td class="n">25 / 60</td><td class="n"><span class="bar" style="width:86px"></span>57.1%</td></tr>
+          <tr><td class="k">thick</td><td class="n">29 / 60</td><td class="n"><span class="bar" style="width:72px"></span>47.7%</td></tr>
+          <tr><td class="k">50x50</td><td class="n">19 / 60</td><td class="n"><span class="bar" style="width:59px"></span>39.1%</td></tr>
+          <tr><td class="k">tummy time</td><td class="n">24 / 60</td><td class="n"><span class="bar" style="width:50px"></span>33.4%</td></tr>
+          <tr><td class="k">washable</td><td class="n">17 / 60</td><td class="n"><span class="bar" style="width:48px"></span>32.3%</td></tr>
+          <tr><td class="k">non-slip</td><td class="n">17 / 60</td><td class="n"><span class="bar" style="width:43px"></span>28.8%</td></tr>
+          <tr class="us"><td class="k">interlocking / tile</td><td class="n">1 / 60</td><td class="n"><span class="bar" style="width:3px"></span>2.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Two of those terms are off the table and it&rsquo;s worth saying why out loud. <strong>Washable</strong>
+      is 32% of board share and the copy has never claimed it &mdash; MioTetto says &ldquo;wipes clean,&rdquo;
+      never machine-washable. <strong>Thick</strong> is 48% of board share and this mat is 0.4 inches against
+      leaders advertising 1.3. Claiming thickness here is picking a fight that gets lost on the detail page.</p>
+
+    <div class="rules">
+      <div class="rule">
+        <span class="lbl">Rule 01</span>
+        <h3>Spend the 75 characters on the category&rsquo;s language, not the product&rsquo;s construction</h3>
+        <p>Modularity is a real differentiator with no established search vocabulary in this niche. It cannot
+          earn a place in an entity label. It belongs in Item Highlights, bullet 1, and image slot 3.</p>
+      </div>
+      <div class="rule">
+        <span class="lbl">Rule 02</span>
+        <h3>Never write copy that a 4.40 rating disputes</h3>
+        <p>Rank 49 of 60 on rating while sitting at $34.57 against a $37.11 median &mdash; priced <em>below</em>
+          the middle of its market. There is no premium here to defend, and no rewrite that fixes satisfaction.</p>
+      </div>
+      <div class="rule">
+        <span class="lbl">Rule 03</span>
+        <h3>The review mass is the asset &mdash; every change happens on this ASIN</h3>
+        <p>5,847 ratings on a 2020 launch, one of only seven pre-2022 products on a board the 2024 cohort now
+          leads. That mass doesn&rsquo;t transfer. No new ASIN, no family split, no re-key.</p>
+      </div>
+    </div>
+
+    <span class="verb-cap">Where it actually sits</span>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th></th><th>MioTetto B091YKYFPX</th><th>Board</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Click share</td><td class="n">1.98% &mdash; rank 15 / 60</td><td class="n">leader 10.92%</td></tr>
+          <tr><td class="k">Price</td><td class="n">$34.57 &mdash; rank 33 / 60</td><td class="n">median $37.11</td></tr>
+          <tr><td class="k">Total ratings</td><td class="n">5,847 &mdash; rank 5 / 60</td><td class="n">leader 30,500</td></tr>
+          <tr class="us"><td class="k">Average rating</td><td class="n">4.40 &mdash; rank 49 / 60</td><td class="n">median 4.59</td></tr>
+          <tr><td class="k">Launch</td><td class="n">Nov 2020</td><td class="n">top two both launched 2024</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 02 ─────────────────────────────────────────────── -->
+  <section id="diagnosis">
+    <div class="eyebrow"><span class="n">02</span><span class="lbl">Diagnosis</span></div>
+    <h2>Retrieved, but under-ranked &mdash; with retrieval capacity thrown away</h2>
+    <p class="lede">Absence doesn&rsquo;t apply. The board proves presence at rank 15 of 60, so any
+      recommendation that treats this as a discovery problem should be challenged on that basis.</p>
+    <p>What&rsquo;s actually happening is that the listing has surrendered its two cheapest retrieval
+      surfaces &mdash; a 477-byte backend field that is dead, and 125 characters of Item Highlights locked
+      behind a 200-character title &mdash; while carrying enough internal contradiction that a system trying
+      to reconcile the product with itself cannot. Two age windows. Two tile sizes. Waterproof against water-resistant.
+      Three set counts. Underneath that sits a ranking constraint the copy cannot touch: 4.40 stars, 49th of 60.</p>
+
+    <div class="meters">
+      <div class="meters-hd">
+        <span class="lbl">Backend search terms &middot; bytes against the 249 cap</span>
+        <span class="byte-n dead">31 of 40 catalogue ASINs de-indexed</span>
+      </div>
+      <div class="meter legend">
+        <div class="meter-top">
+          <span class="meter-id">B091YKYFPX &middot; DE-TE58-EO4K</span>
+          <span class="byte-n dead">477 B &mdash; field dead</span>
+        </div>
+        <div class="track"><div class="fill" style="width:95.4%"></div><div class="cap" style="left:49.8%"></div></div>
+      </div>
+      <div class="meter">
+        <div class="meter-top">
+          <span class="meter-id">B091YKYFPX &middot; PPM-CGB-16T</span>
+          <span class="byte-n dead">475 B &mdash; field dead</span>
+        </div>
+        <div class="track"><div class="fill" style="width:95%"></div><div class="cap" style="left:49.8%"></div></div>
+      </div>
+      <div class="meter">
+        <div class="meter-top">
+          <span class="meter-id">Catalogue worst &middot; 4 &times; PLAYARD rows</span>
+          <span class="byte-n dead">499 B &mdash; exactly 2.0&times; the limit</span>
+        </div>
+        <div class="track"><div class="fill" style="width:99.8%"></div><div class="cap" style="left:49.8%"></div></div>
+      </div>
+      <div class="meter">
+        <div class="meter-top">
+          <span class="meter-id">B091YKYFPX &middot; after rebuild</span>
+          <span class="byte-n live">246 B &mdash; indexed</span>
+        </div>
+        <div class="track"><div class="fill ok" style="width:49.2%"></div><div class="cap" style="left:49.8%"></div></div>
+      </div>
+    </div>
+    <p>That 499-byte figure across all four playard rows is the tell: it&rsquo;s exactly twice the limit,
+      which is the signature of copy written to a 500-byte spec that flat-file validation does not honor.</p>
+  </section>
+
+  <!-- 03 ─────────────────────────────────────────────── -->
+  <section id="gate">
+    <div class="eyebrow"><span class="n">03</span><span class="lbl">The gate</span></div>
+    <h2>Stage zero never cleared, and that limits what can be tested</h2>
+    <p>There is no Business Report in the pack, so out-of-stock, Buy Box share, Prime state and suppression
+      have not been ruled out. The board reports an average of two sellers and vendors on this ASIN over 360
+      days, which is consistent with a second offer competing &mdash; but that is not a Buy Box figure and it
+      is not being treated as one.</p>
+    <p><strong>The consequence, stated plainly:</strong> a retrieval finding cannot be separated from an offer
+      problem until that report exists, and no measured before/after test should be scheduled on this ASIN
+      until Buy Box is confirmed above roughly 95%. Reports &rarr; Business Reports &rarr; Detail Page Sales
+      and Traffic by Child Item closes this in five minutes.</p>
+  </section>
+
+  <!-- 04 ─────────────────────────────────────────────── -->
+  <section id="findings">
+    <div class="eyebrow"><span class="n">04</span><span class="lbl">Findings, biggest first</span></div>
+    <h2>Eight findings, ordered by what they cost</h2>
+
+    <div class="finds">
+      <article class="find">
+        <div class="num">01</div>
+        <div>
+          <h3>The backend search-terms field is de-indexed &mdash; catalogue-wide</h3>
+          <p>477 bytes on one SKU row, 475 on another, against a 249-byte cap. Over the cap Amazon drops the
+            whole field rather than the overflow. Thirty-two well-chosen terms, none of them indexed. Across
+            the catalogue: 31 of 40 ASINs, median 479 bytes, worst 500.</p>
+          <code class="verb bad">play mat; playmat; kids play mat; playroom rug; playroom decor; foam floor tiles; interlocking foam tiles; carpet tiles; carpet squares; rainbow rug; floor mat; soft mat; game mat; exercise mat; toddler play area; ...</code>
+        </div>
+        <span class="sev s1">Critical</span>
+      </article>
+
+      <article class="find">
+        <div class="num">02</div>
+        <div>
+          <h3>200-character title locks Item Highlights &mdash; zero of 19 tile ASINs have it</h3>
+          <p>Amazon&rsquo;s cap is 75 including spaces, and the title must comply <em>before</em> Item Highlights
+            can be added. There is no parallel path. So this listing is exposed to an unreviewed AI rewrite that
+            Amazon says is being applied gradually, and shut out of 125 characters of confirmed-searchable field
+            that compliant competitors already use. One open question: four catalogue ASINs show a populated
+            Item Highlight alongside a 186-character title, which the gating rule says cannot happen. The flat
+            file shows submitted values, not live ones &mdash; that needs five minutes on the live page to settle.</p>
+        </div>
+        <span class="sev s1">Critical</span>
+      </article>
+
+      <article class="find">
+        <div class="num">03</div>
+        <div>
+          <h3>The listing contradicts itself on who the product is for</h3>
+          <p>The title ends &ldquo;Playmat for Babies 6-12 Months.&rdquo; Bullet 5 opens on
+            &ldquo;play mat for babies 0&ndash;6 months.&rdquo; Two mutually exclusive age windows in the same
+            five bullets. <code>Age Range Description</code> is empty here while 12 of 18 peers fill it &mdash;
+            and the peers disagree with each other: the identical 16-tile mat in another color reads
+            <code>3+ Years</code> with a 36-month minimum age. On a crawling mat, that removes it from the age
+            filter the entire tummy-time half of this niche browses through.</p>
+        </div>
+        <span class="sev s1">Critical</span>
+      </article>
+
+      <article class="find">
+        <div class="num">04</div>
+        <div>
+          <h3>The physical dimensions do not agree with each other, anywhere</h3>
+          <p>The same 16-tile mat is described four ways: attributes say 48 &times; 48 inches, which needs
+            12-inch tiles; bullet 2 says 12.4-inch tiles, which makes 49.6; a sibling ASIN&rsquo;s attributes say
+            50.4; and the two descriptions on this one ASIN say &ldquo;12.4 x 12.4-inch&rdquo; and
+            &ldquo;12 x 12-inch&rdquo; respectively. Then the package: 12.01 inches wide, which a 12.4-inch tile
+            does not fit into, and 5.0 inches tall against 6.4 inches of foam before 27 borders go in. Package
+            weights for the identical mat run 1.2, 2.8 and 3.3 lb. On the 36-tile ASIN, item weight
+            <code>3.3 Kilograms</code> sits against package weight <code>5.0 Pounds</code> &mdash; the item is
+            heavier than its own box.</p>
+        </div>
+        <span class="sev s1">Critical</span>
+      </article>
+
+      <article class="find">
+        <div class="num">05</div>
+        <div>
+          <h3>&ldquo;Waterproof&rdquo; in the copy, &ldquo;Water Resistant&rdquo; in the attributes</h3>
+          <p>Bullet 3&rsquo;s headline says <code>WATERPROOF PLAY MAT</code>. The Special Features attribute says
+            <code>Water Resistant</code>. Amazon&rsquo;s structured data disagrees with your bullets, and one of
+            them is wrong. That belongs to whoever owns the product spec, not a copywriter. On a sibling SKU the
+            same value is populated twice in one row, which suggests these were pasted rather than selected.</p>
+        </div>
+        <span class="sev s2">High</span>
+      </article>
+
+      <article class="find">
+        <div class="num">06</div>
+        <div>
+          <h3>Bullet copy fails five of twelve rules before anyone reads it</h3>
+          <p>All five bullets open with an emoji rather than the claim &mdash; the retrieval encoder reads an
+            ordered bag of words and the first token is decoration. &ldquo;Perfect&rdquo; appears three times;
+            advertisement register measured &minus;1.82 on rank, second-worst of fifteen tested styles. Two more
+            the checker can&rsquo;t see: bullet 3 ends <code>Use as tapete para bebes</code> &mdash; Spanish in a
+            US listing &mdash; and the description carries a UTF-8 apostrophe leak, <code>your kid&acirc;s nursery</code>,
+            verified on seven ASINs.</p>
+        </div>
+        <span class="sev s2">High</span>
+      </article>
+
+      <article class="find">
+        <div class="num">07</div>
+        <div>
+          <h3>Bullet blocks are shared verbatim across seven ASINs</h3>
+          <p>Efficient right up until one is wrong, at which point it&rsquo;s wrong in seven places &mdash; which
+            is exactly what happened with the 12.4-inch tile size and the age contradiction. The claim sweep found
+            22 ASINs whose bullets assert an age window their own title does not.</p>
+        </div>
+        <span class="sev s2">High</span>
+      </article>
+
+      <article class="find">
+        <div class="num">08</div>
+        <div>
+          <h3>Browse node &mdash; flagged, and deliberately not recommended</h3>
+          <p>MioTetto sits in Puzzles / Puzzle Play Mats. On the board, 56 of 60 products carrying 94.4% of clicks
+            sit in Activity &amp; Entertainment / Baby Gyms &amp; Playmats. The obvious read is a misfiled listing.
+            Don&rsquo;t act on it yet: the ASIN is on the board at 1.98%, so the node is demonstrably not filtering
+            it out of search, and <code>Average BSR: 1</code> means this is the number-one bestseller in its node.
+            Moving trades a #1 badge in a small pond for roughly rank 15 in a large one. That is a real trade, not
+            a hygiene fix &mdash; it goes last, tested on a sibling.</p>
+        </div>
+        <span class="sev s3">Hold</span>
+      </article>
+    </div>
+
+    <span class="verb-cap">Checked, and not a problem</span>
+    <p>Worth stating so the findings above carry weight. The image stack is full &mdash; eight images plus a
+      swatch, no empty slots. Attribute fill is 79 fields against a line median of 74, so this is not an
+      under-filled listing; it is an inaccurately-filled one, which is a different and more expensive diagnosis.
+      Title and Item Name match on the live SKU, so no submitted-but-unapplied fix is hiding here.</p>
+  </section>
+
+  <!-- 05 ─────────────────────────────────────────────── -->
+  <section id="rewrite">
+    <div class="eyebrow"><span class="n">05</span><span class="lbl">The rewrite</span></div>
+    <h2>Title and Item Highlights are one change, not two</h2>
+    <p class="lede">The title fix unlocks the field. There is no sequence in which they happen separately,
+      and describing them as two workstreams describes a sequence that does not exist.</p>
+
+    <div class="ba">
+      <div class="ba-col before">
+        <span class="lbl">Live &mdash; fails 5 of 12 rules</span>
+        <div class="field">
+          <div class="field-n"><span>Title</span><span class="ct over">200 / 75</span></div>
+          <div class="field-v">MioTetto Baby Play Mat, Soft Foam Floor Tiles for Kids. Adjustable Interlocking Foam Tiles, Fits with 50x50 Playpen Baby mat for Crawling &amp; Development, Safe &amp; Non-Toxic Playmat for Babies 6-12 Months</div>
+        </div>
+        <div class="field">
+          <div class="field-n"><span>Item Highlights</span><span class="ct over">locked</span></div>
+          <div class="field-v empty">Empty &mdash; gated behind a compliant title</div>
+        </div>
+        <div class="field">
+          <div class="field-n"><span>Backend terms</span><span class="ct over">477 / 249 B</span></div>
+          <div class="field-v">play mat; playmat; kids play mat; playroom rug; playroom decor; foam floor tiles; interlocking foam tiles; carpet tiles; &hellip;</div>
+        </div>
+      </div>
+      <div class="ba-col after">
+        <span class="lbl">Rewrite &mdash; passes 12 of 12</span>
+        <div class="field">
+          <div class="field-n"><span>Title</span><span class="ct under">70 / 75</span></div>
+          <div class="field-v">MioTetto Baby Play Mat, 16 Interlocking Foam Tiles, Fits 50x50 Playpen</div>
+        </div>
+        <div class="field">
+          <div class="field-n"><span>Item Highlights</span><span class="ct under">119 / 125</span></div>
+          <div class="field-v">Non-Toxic EVA, 0.4 in Thick, Waterproof Wipe-Clean, Anti-Slip, Tummy Time &amp; Crawling, Toddler Nursery, Matching Borders</div>
+        </div>
+        <div class="field">
+          <div class="field-n"><span>Backend terms</span><span class="ct under">246 / 249 B</span></div>
+          <div class="field-v">puzzle jigsaw mats modular carpet squares tiling rug rugs nursery playroom decor infant infants toddler toddlers activity gym area eva waterproof anti slip tummy time cushion cushioned padded protector flooring room living portable borders border</div>
+        </div>
+      </div>
+    </div>
+
+    <span class="verb-cap">Bullets &mdash; front-loaded, factual, no register drift</span>
+    <div class="bullets">
+      <div class="bullet"><span><strong>16 INTERLOCKING TILES COVER 48 X 48 INCHES</strong> and fit inside a 50x50 playpen. Add or remove tiles to change the size and shape of the mat; a one-piece mat cannot. Matching borders are included for a finished edge.</span></div>
+      <div class="bullet"><span><strong>NON-TOXIC EVA FOAM, MADE WITHOUT BPA, LEAD OR PHTHALATE.</strong> Each tile is 0.4 inches thick, soft enough for tummy time and crawling and firm enough to stay flat under a walking toddler.</span></div>
+      <div class="bullet"><span><strong>WATERPROOF SURFACE WIPES CLEAN</strong> with a damp cloth, so spills, milk and food do not soak in. The anti-slip underside keeps the mat in place on hard floors.</span></div>
+      <div class="bullet"><span><strong>SIX COLOR COMBINATIONS IN PASTEL SHADES,</strong> so the mat reads as part of a nursery, playroom or living space rather than as toy flooring. Tiles from the same set mix and match.</span></div>
+      <div class="bullet"><span><strong>AVAILABLE AS 9, 16 OR 36 TILES</strong> with matching borders, covering 10, 16 or 36 square feet. Add a second set later to extend the same mat instead of replacing it.</span></div>
+    </div>
+
+    <div class="pass">
+      <span class="mono">ruleset_check &rarr; exit 0</span>
+      <p>All twelve rules pass, including the novel-claim rule &mdash; every content word traces back to the
+        existing title, bullets, attributes or description. No new claim, nothing needing sign-off.</p>
+    </div>
+
+    <p style="margin-top:28px"><strong>Two things to settle before this ships, and they aren&rsquo;t mine to
+      decide.</strong> Item Highlights says &ldquo;Waterproof&rdquo; because the live bullets do &mdash; if the
+      spec says water-resistant, swap it (<code>Water-Resistant Wipe-Clean</code> fits the same 125 characters)
+      and fix bullet 3 to match. And &ldquo;Fits 50x50 Playpen&rdquo; is safe if the mat is 48 &times; 48. It is
+      not safe if it&rsquo;s 50.4 &times; 50.4, which is what a sibling&rsquo;s attributes claim. Settle the size first.</p>
+  </section>
+
+  <!-- 06 ─────────────────────────────────────────────── -->
+  <section id="score">
+    <div class="eyebrow"><span class="n">06</span><span class="lbl">Score</span></div>
+    <h2>Ten binary checks, re-derivable from the same two exports</h2>
+    <p class="lede">A score against checkable criteria &mdash; never a prediction of revenue, and it should
+      not become a forecast in anyone&rsquo;s mind.</p>
+
+    <div class="score">
+      <div class="score-card">
+        <span class="lbl">Before</span>
+        <div class="tiles" role="img" aria-label="3 of 10 checks passing">
+          <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>
+          <div class="tile on">4</div><div class="tile on">5</div><div class="tile">6</div>
+          <div class="tile">7</div><div class="tile">8</div><div class="tile on">9</div>
+          <div class="tile">10</div>
+        </div>
+        <span class="stat-n tnum">3 / 10</span>
+        <p>Title cap, Item Highlights, backend bytes, register and bullet front-loading all failing.</p>
+      </div>
+      <div class="score-card">
+        <span class="lbl">After the rewrite</span>
+        <div class="tiles" role="img" aria-label="7 of 10 checks passing, 1 partial">
+          <div class="tile on">1</div><div class="tile on">2</div><div class="tile on">3</div>
+          <div class="tile on">4</div><div class="tile on">5</div><div class="tile on">6</div>
+          <div class="tile on">7</div><div class="tile part">8</div><div class="tile on">9</div>
+          <div class="tile">10</div>
+        </div>
+        <span class="stat-n tnum">7 / 10</span>
+        <p>Check 8 closes with the attribute work in window two. Check 10 &mdash; disputed review themes &mdash;
+          cannot be scored at all without the live page.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 ─────────────────────────────────────────────── -->
+  <section id="sequence">
+    <div class="eyebrow"><span class="n">07</span><span class="lbl">Sequence</span></div>
+    <h2>Ordered by lever tier, not by ease</h2>
+    <p class="lede">One change per ASIN per window, because batched changes are unattributable. Hold ad spend
+      constant, use the price band as control, read at 60&ndash;90 days, and write the decision rule down
+      before it ships rather than after you&rsquo;ve seen the data.</p>
+
+    <div class="seq">
+      <div class="step hot">
+        <span class="lbl">Window 1 &middot; has a clock on it</span>
+        <h3>Title and Item Highlights, together</h3>
+        <p>The 200-character title is exposed to an unreviewed AI rewrite right now, and every day it stays
+          over 75 characters is a day Item Highlights is locked. This is the only item on the list with a deadline
+          set by someone other than you.</p>
+      </div>
+      <div class="step hot">
+        <span class="lbl">Window 1 &middot; same pass</span>
+        <h3>The backend field, across all 31 ASINs at once</h3>
+        <p>477 bytes to 246. This isn&rsquo;t really a second change &mdash; it repairs a field currently
+          contributing nothing, so there&rsquo;s no before-state to contaminate. Catalogue hygiene, not an experiment.
+          The rebuild also strips four competitor brand names, four Spanish terms and seven &ldquo;wooden&rdquo;
+          variants sitting on two mesh playards.</p>
+      </div>
+      <div class="step">
+        <span class="lbl">Window 2</span>
+        <h3>The attributes</h3>
+        <p>Age Range Description filled and made consistent; the 36-month minimum corrected on two color variants;
+          tile size and package dimensions settled to one true value; Item Thickness populated with the 0.4 inches
+          the copy has claimed for years without an attribute behind it; weight units normalized. Free, no downside,
+          and the highest-weighted controllable lever there is.</p>
+      </div>
+      <div class="step">
+        <span class="lbl">Window 3</span>
+        <h3>The shared bullet block</h3>
+        <p>Fix once, push to all seven ASINs. Removes the age contradiction, the Spanish, the emoji front-load and
+          the set-count conflict in a single action.</p>
+      </div>
+      <div class="step">
+        <span class="lbl">Window 4</span>
+        <h3>Images &mdash; slots 2, 3 and 6</h3>
+        <p>Slot 2 becomes a spec panel carrying the numbers a buyer filters on, because those are precisely the
+          numbers the flat file disagrees with itself about. Slot 3 carries modularity, the differentiator that
+          can&rsquo;t buy title characters and has to be won on the page. Slot 6 carries the non-toxic proof &mdash;
+          the copy says &ldquo;certified materials&rdquo; and no certification attribute exists anywhere in the flat file.</p>
+      </div>
+      <div class="step">
+        <span class="lbl">Later &mdash; and only on a sibling</span>
+        <h3>The browse node</h3>
+        <p>Never on this ASIN. See finding 08.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 ─────────────────────────────────────────────── -->
+  <section id="limits">
+    <div class="eyebrow"><span class="n">08</span><span class="lbl">Limits</span></div>
+    <h2>What this audit could not do, and what closes each gap</h2>
+
+    <div class="limits">
+      <div class="limit">
+        <span class="lbl">Missing &middot; changes the ranking</span>
+        <h3>Search Terms tab</h3>
+        <p>Only the Products tab was supplied. Terms should be ranked by modeled units &mdash; volume &times;
+          conversion &mdash; never volume, because the highest-volume term in a niche is frequently among the
+          worst-converting. The term table above ranks by share of board clicks carried by titles containing the
+          term, which tells you what the winners say, not what converts. Weaker, and labeled as such.</p>
+      </div>
+      <div class="limit">
+        <span class="lbl">Missing &middot; changes the verdict</span>
+        <h3>Search Query Performance</h3>
+        <p>No own-name share, so no rewrite-pays verdict. Under 30% means the listing is the lever and effort
+          compounds; over 50% means a rewrite defends share it already has and cannot grow the category. Which
+          one this is changes how you&rsquo;d read any test result here.</p>
+      </div>
+      <div class="limit">
+        <span class="lbl">Missing &middot; probably holds the answer</span>
+        <h3>The live page</h3>
+        <p>Two findings unavailable: the ranked review lexicon with sentiment, and the A+ alt-text layer. On a
+          product rated 4.40 with 5,847 ratings, the review lexicon is very likely where the real answer sits.
+          It is the single most valuable thing left to pull.</p>
+      </div>
+      <div class="limit">
+        <span class="lbl">Missing &middot; gates the test</span>
+        <h3>Business Report</h3>
+        <p>Stage zero never cleared, so a retrieval finding cannot be separated from an offer problem and no
+          measured test should be scheduled until Buy Box is confirmed.</p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Every figure reproduces from <span class="mono">Category+Listings+Report_08-25-2026.xlsm</span> and
+      <span class="mono">NicheDetailsProductsTab_8_26_2026.csv</span> using the listing-audit toolchain.
+      Evidence grades: the 75-character cap, the Item Highlights gating, the 249-byte backend limit and the
+      attribute weighting are Amazon primary. Register and length findings come from independent controlled work.
+      Everything derived from the exports &mdash; click-share ranks, term-value proxies, peer fill denominators
+      &mdash; reads <em>Derived, not measured</em>. No COGS was supplied, so no margin, break-even or forecast
+      figure appears anywhere in this document, and none should be estimated. Nothing here has been uploaded
+      or published.</p>
+  </div>
+</footer>
+</body>
+</html>
