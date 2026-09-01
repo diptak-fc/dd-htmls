@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Onboarding scan of Material Kitchen - paid media, Amazon listing health, category trends, social footprint and six call openers. Prepared 1 September 2026.">
+<title>Material Kitchen Onboarding Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground:      #F6F8F5;
+    --surface:     #FFFFFF;
+    --surface-alt: #EDF1EC;
+    --ink:         #14201B;
+    --ink-soft:    #47564F;
+    --muted:       #6E7D76;
+    --rule:        #D6DED8;
+    --accent:      #1D5A4A;
+    --accent-soft: #E2EEE8;
+    --ocean:       #2C6C85;
+    --clay:        #A9502B;
+    --clay-soft:   #F7E7DE;
+    --gold:        #8A6A17;
+    --gold-soft:   #F5EEDB;
+
+    --f-display: "Fraunces", Georgia, "Times New Roman", serif;
+    --f-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --maxw: 1040px;
+    --prose: 68ch;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0D1411;
+      --surface:     #141E19;
+      --surface-alt: #1A2620;
+      --ink:         #E7EDE9;
+      --ink-soft:    #B4C2BB;
+      --muted:       #8B9A92;
+      --rule:        #27352E;
+      --accent:      #6FC2A5;
+      --accent-soft: #16302795;
+      --ocean:       #74B4CD;
+      --clay:        #E29467;
+      --clay-soft:   #2E211995;
+      --gold:        #D3B45E;
+      --gold-soft:   #2A241195;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0D1411;
+    --surface:     #141E19;
+    --surface-alt: #1A2620;
+    --ink:         #E7EDE9;
+    --ink-soft:    #B4C2BB;
+    --muted:       #8B9A92;
+    --rule:        #27352E;
+    --accent:      #6FC2A5;
+    --accent-soft: #16302795;
+    --ocean:       #74B4CD;
+    --clay:        #E29467;
+    --clay-soft:   #2E211995;
+    --gold:        #D3B45E;
+    --gold-soft:   #2A241195;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 28px 96px;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    padding: 72px 0 40px;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 6.5vw, 4.1rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .standfirst {
+    font-size: 1.16rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ---------- scorecard ---------- */
+
+  .scorecard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .tile {
+    background: var(--surface);
+    padding: 22px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .tile .label {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .tile .figure {
+    font-family: var(--f-display);
+    font-size: 2.15rem;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tile .note {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  .fig-alarm  { color: var(--clay); }
+  .fig-good   { color: var(--accent); }
+  .fig-watch  { color: var(--gold); }
+
+  /* ---------- sections ---------- */
+
+  section { padding-top: 58px; }
+
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 10px;
+    margin-bottom: 26px;
+  }
+
+  .sec-head .num {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    flex: none;
+  }
+
+  h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(1.55rem, 3.2vw, 2.05rem);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: var(--f-body);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.005em;
+    margin: 0 0 8px;
+  }
+
+  p { margin: 0 0 16px; max-width: var(--prose); }
+  p:last-child { margin-bottom: 0; }
+
+  .lede { font-size: 1.06rem; color: var(--ink-soft); }
+
+  strong { font-weight: 600; }
+
+  a { color: var(--ocean); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+  /* ---------- finding cards ---------- */
+
+  .findings {
+    display: grid;
+    gap: 14px;
+    margin-top: 22px;
+  }
+
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left-width: 3px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .finding.gap    { border-left-color: var(--clay); }
+  .finding.win    { border-left-color: var(--accent); }
+  .finding.watch  { border-left-color: var(--gold); }
+
+  .finding .top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .chip {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    flex: none;
+  }
+
+  .chip.gap   { background: var(--clay-soft);   color: var(--clay); }
+  .chip.win   { background: var(--accent-soft); color: var(--accent); }
+  .chip.watch { background: var(--gold-soft);   color: var(--gold); }
+
+  .finding h3 { margin: 0; }
+  .finding p { margin: 0; font-size: 15px; color: var(--ink-soft); max-width: none; }
+
+  /* ---------- tables ---------- */
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    margin-top: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+    min-width: 520px;
+  }
+
+  th {
+    text-align: left;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--ink-soft);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  td:first-child { color: var(--ink); font-weight: 500; }
+  .num-cell { font-variant-numeric: tabular-nums; font-family: var(--f-mono); font-size: 13px; white-space: nowrap; }
+
+  /* ---------- pull quote / opener list ---------- */
+
+  .openers { display: grid; gap: 18px; margin-top: 8px; counter-reset: opener; }
+
+  .opener {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 16px;
+    align-items: start;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .opener:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .opener .idx {
+    counter-increment: opener;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--accent);
+    padding-top: 5px;
+  }
+  .opener .idx::before { content: counter(opener, decimal-leading-zero); }
+
+  .opener .say {
+    font-family: var(--f-display);
+    font-size: 1.14rem;
+    line-height: 1.42;
+    letter-spacing: -0.01em;
+    margin: 0 0 7px;
+    max-width: 58ch;
+  }
+
+  .opener .why {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+    max-width: 62ch;
+  }
+
+  /* ---------- callout ---------- */
+
+  .callout {
+    background: var(--surface-alt);
+    border: 1px solid var(--rule);
+    padding: 20px 22px;
+    margin-top: 24px;
+  }
+  .callout p { max-width: none; font-size: 14.5px; color: var(--ink-soft); }
+  .callout p:last-child { margin-bottom: 0; }
+
+  ul.tight { margin: 0 0 16px; padding-left: 20px; max-width: var(--prose); }
+  ul.tight li { margin-bottom: 7px; color: var(--ink-soft); }
+  ul.tight li:last-child { margin-bottom: 0; }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  footer p { max-width: none; font-size: 13px; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 620px) {
+    .wrap { padding: 0 18px 72px; }
+    .masthead { padding-top: 48px; }
+  }
+</style>
+
+<style>
+  @media print {
+    :root {
+      --ground: #FFFFFF; --surface: #FFFFFF; --surface-alt: #F4F6F3;
+      --ink: #101A15; --ink-soft: #303A35; --muted: #5A665F; --rule: #C9D2CB;
+    }
+    body { font-size: 10.5pt; }
+    .wrap { max-width: none; padding: 0 0 12pt; }
+    .masthead { padding-top: 0; }
+    section { padding-top: 26pt; break-inside: auto; }
+    .sec-head, h2, h3 { break-after: avoid; }
+    .finding, .opener, .tile, .callout, tr { break-inside: avoid; }
+    .table-scroll { overflow: visible; }
+    table { min-width: 0; }
+    a { color: inherit; text-decoration: none; }
+    footer { break-inside: avoid; }
+  }
+  @page { margin: 14mm; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">New client onboarding &nbsp;·&nbsp; Category &amp; channel scan</p>
+    <h1>Material Kitchen is winning the argument and <em>losing the shelf</em>.</h1>
+    <p class="standfirst">A design-led NYC kitchenware brand with genuine editorial authority on the biggest trend in its category — and, right now, almost no paid media, a thin Amazon catalog, and stock problems on both channels.</p>
+    <p class="meta-row">
+      <span>Prepared 1 Sep 2026</span>
+      <span>Sources: DTC site, Amazon US, Meta Ad Library, Google SERP, press</span>
+    </p>
+  </header>
+
+  <section aria-label="At a glance">
+    <div class="scorecard">
+      <div class="tile">
+        <span class="label">Active Meta ads</span>
+        <span class="figure fig-alarm">0</span>
+        <span class="note">Globally, all formats. Verified against their Page ID.</span>
+      </div>
+      <div class="tile">
+        <span class="label">Google brand-term ads</span>
+        <span class="figure fig-alarm">0</span>
+        <span class="note">No paid or Shopping unit on "material kitchen".</span>
+      </div>
+      <div class="tile">
+        <span class="label">Amazon Sponsored Products</span>
+        <span class="figure fig-good">Live</span>
+        <span class="note">Holding SP slots 1 and 6 on their own brand term.</span>
+      </div>
+      <div class="tile">
+        <span class="label">Instagram followers</span>
+        <span class="figure">93.2K</span>
+        <span class="note">The one channel with real audience equity.</span>
+      </div>
+      <div class="tile">
+        <span class="label">TikTok followers</span>
+        <span class="figure fig-alarm">3.4K</span>
+        <span class="note">28× smaller than Instagram. No TikTok Shop.</span>
+      </div>
+      <div class="tile">
+        <span class="label">Hero ASIN ratings</span>
+        <span class="figure fig-watch">111</span>
+        <span class="note">4.4★, Amazon's Choice. Competitors sit at 7K–52K.</span>
+      </div>
+      <div class="tile">
+        <span class="label">Knife SKUs on Amazon</span>
+        <span class="figure fig-alarm">0</span>
+        <span class="note">Every knife in their Brand Store reads "Currently unavailable".</span>
+      </div>
+      <div class="tile">
+        <span class="label">Units left, hero ASIN</span>
+        <span class="figure fig-alarm">13</span>
+        <span class="note">13 / 15 / 16 across the three colorways, entering Q4.</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">01</span><h2>Who they are</h2></div>
+    <p class="lede">Material (trading as Material Kitchen, legal entity Tokimeku, Inc.) is a New York kitchenware brand founded by <strong>Eunice Byun</strong>, a former beauty executive who is CEO and the public face of the brand, and <strong>David Nguyen</strong>. It raised a Series A and stayed deliberately small.</p>
+    <p>The founding idea was editorial rather than industrial: sell people <em>fewer, better</em> tools instead of the 14-piece block set nobody uses. That gave them an unusually strong press position for a company their size — Food &amp; Wine, CNN Underscored, Forbes, Serious Eats, The New York Times, Boston Globe, The Guardian.</p>
+    <p>Their catalogue spans prepware, knives, tools, ceramics, tabletop linens and cutlery, priced from $24 potholders to a $615 mixing bowl. AOV intent is high; the assortment is curated, not deep.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">02</span><h2>The strategic story worth leading with</h2></div>
+    <p class="lede">Material just did something rare: it killed its own hero product on principle.</p>
+    <p>For years the brand was known for the <strong>reBoard</strong> — a cutting board made from recycled plastic and sugarcane. As the microplastics conversation moved from fringe to mainstream, they replaced it with the <strong>MK Free Board</strong>: a sugarcane-based biopolymer blended with natural clay minerals, with <em>no plastic at all</em>. 100% USDA-certified biobased content, Good Design Award for the surface texture, colourways named Cloud, Shell, Ocean, Coral and Tide.</p>
+    <p>It launched around April 2026 at $48 and now sits at $52 for the large (17.5" × 12") and $44 for the Midi (14" × 9.25"). It is their site's #1 bestseller, and The Guardian named it <strong>best plastic-free board for raw meat</strong> in its 2026 test — the only non-wood board on that list.</p>
+    <div class="callout">
+      <p><strong>Why this matters commercially:</strong> they cannibalised a proven SKU to get ahead of a consumer anxiety, and the trade press validated the call within months. That is a founder who will take a strategic argument seriously — which is the register to pitch in.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">03</span><h2>Paid media: the tank is empty</h2></div>
+    <p class="lede">This is the headline finding, and the single most useful thing to walk in with.</p>
+
+    <div class="findings">
+      <div class="finding gap">
+        <div class="top"><span class="chip gap">Gap</span><h3>Zero active Meta ads, anywhere</h3></div>
+        <p>Searched the Ad Library against their verified Page (@materialkitchen) with Active status, All ads, all countries: no results. Their only historical records are seven items from Nov 2021 – Jun 2022, one of which was removed for an Advertising Standards breach and one for a missing disclaimer. A brand with 93K Instagram followers and a product The Guardian just endorsed is running no prospecting, no retargeting, no Advantage+ catalogue.</p>
+      </div>
+      <div class="finding gap">
+        <div class="top"><span class="chip gap">Gap</span><h3>No Google brand defence</h3></div>
+        <p>The SERP for "material kitchen" returns no ad block and no Shopping unit. Their organic result is strong — sitelinks to All Products, Cookware, MK Free Board, Tools, Knives — but any competitor could buy above it tomorrow for pennies.</p>
+      </div>
+      <div class="finding watch">
+        <div class="top"><span class="chip watch">Nuance</span><h3>Their brand name is a keyword liability</h3></div>
+        <p>"Material kitchen" collides with kitchen-cabinet-material and modular-kitchen searches — the SERP is half YouTube videos about MDF versus plywood. Any brand-volume number they've been quoted is inflated with non-branded, non-buying intent. Their real branded terms are <em>reBoard</em>, <em>MK Free Board</em> and <em>Material Kitchen knives</em>.</p>
+      </div>
+      <div class="finding win">
+        <div class="top"><span class="chip win">Working</span><h3>Amazon Sponsored Products is live and holding</h3></div>
+        <p>On a branded Amazon search they own SP position 1 and 6, plus organic 1, 2 and 3. So someone is running Amazon PPC — it's the only paid channel switched on.</p>
+      </div>
+      <div class="finding gap">
+        <div class="top"><span class="chip gap">Gap</span><h3>Competitors are conquesting their own brand term</h3></div>
+        <p>SP slots 2, 3, 4 and 5 on "material kitchen" go to Classic Series, Essential Series, Epicurean and a silicone utensil brand. There is no Sponsored Brands headline and no Brand Store banner defending the top of that page — the cheapest fix in the account.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">04</span><h2>Amazon: a good product inside a leaky listing</h2></div>
+    <p class="lede">The hero ASIN (B0FFHK44B7) is performing — 4.4★, Amazon's Choice, 100–200+ units a month per colourway. The problems around it are all fixable, which makes them ideal talking points.</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>What we found</th><th>Why it costs them</th><th>Severity</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Attribute reads<br><span class="num-cell">Material: Polycarbonate (PC)</span></td>
+            <td>The spec table contradicts the entire brand promise on the same screen. A shopper researching microplastics will read that and bounce.</td>
+            <td class="num-cell">Critical</td>
+          </tr>
+          <tr>
+            <td>Prime inconsistency across colourways</td>
+            <td>Ocean shows Prime delivery Sep 3; Shell and Cloud show free delivery Sep 10 with no Prime. A one-week gap against Prime competitors on the same page.</td>
+            <td class="num-cell">Critical</td>
+          </tr>
+          <tr>
+            <td>Every knife SKU "Currently unavailable"</td>
+            <td>Their highest-AOV category is unbuyable on Amazon while ranking and reviews decay. The 5pc steak set has 47 ratings sitting idle.</td>
+            <td class="num-cell">Critical</td>
+          </tr>
+          <tr>
+            <td>13–16 units left per colourway</td>
+            <td>Stockout risk immediately before Q4, which would reset their Amazon's Choice badge and organic rank.</td>
+            <td class="num-cell">High</td>
+          </tr>
+          <tr>
+            <td>Midi board (DTC, $44) not listed</td>
+            <td>Multiple reviewers explicitly ask for a smaller size. They already make it. That is a listed-tomorrow revenue line.</td>
+            <td class="num-cell">High</td>
+          </tr>
+          <tr>
+            <td>"Slides on the counter" in 3 of 8 top reviews</td>
+            <td>The #1 recurring objection, and their own bullet answers it with "place a damp towel underneath". They used to sell a grippy version.</td>
+            <td class="num-cell">High</td>
+          </tr>
+          <tr>
+            <td>Ceramics and tabletop entirely absent</td>
+            <td>A $25–$615 assortment with zero Amazon presence, in categories that index well for gifting and registry.</td>
+            <td class="num-cell">Medium</td>
+          </tr>
+          <tr>
+            <td>No Climate Pledge Friendly badge</td>
+            <td>A USDA-certified biobased product with no sustainability badge, in a category where Amazon surfaces that filter prominently.</td>
+            <td class="num-cell">Medium</td>
+          </tr>
+          <tr>
+            <td>Typo in bullet 4 ("towl")</td>
+            <td>Small, but it signals nobody has audited the listing since launch — a useful, non-confrontational thing to mention.</td>
+            <td class="num-cell">Low</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">05</span><h2>Category trends, on and off Amazon</h2></div>
+
+    <h3>On Amazon: the non-toxic board war is being won on price</h3>
+    <p>The cutting board category has reorganised itself around "what is this made of". The volume leaders are all cheap material stories: <strong>titanium boards</strong> at $25–$30 doing 10,000+ units a month and holding #1 Best Seller, stainless steel at $18–$20 doing 7,000–8,000, wheat-straw and wood-fibre composites at $20–$25. Legacy incumbents sit on enormous review moats — Gorilla Grip 52K ratings, SMIRLY 14K, Epicurean 7K.</p>
+    <p>Material is playing the same "non-toxic" hand at <strong>2× the category price with 1% of the review volume</strong>. Their defensible angles are the ones the mass players cannot claim: USDA-certified biobased, knife-friendly (titanium's known weakness is dulling blades), and third-party editorial validation. None of that is currently in their listing copy or A+ content.</p>
+
+    <h3>Off Amazon: the demand is editorial, not paid</h3>
+    <p>The category's traffic is being routed by publishers, not advertisers — The Guardian's 2026 plastic-free board test, EatingWell's non-toxic round-up, Food &amp; Wine's Material-specific review, plus a large Reddit corpus in r/cookware and r/Cuttingboards where "non toxic cutting board" is a recurring thread. Material already wins in that layer. What they don't do is convert it: no paid search capturing the traffic those articles create, and no retargeting on the people who read them.</p>
+
+    <div class="callout">
+      <p><strong>The social commerce number to bring up:</strong> TikTok Shop is forecast at roughly <strong>$23.4B</strong> in US retail ecommerce for 2026 and about <strong>22.8%</strong> of US social commerce, with ~35% of US adults having bought through it. Home and kitchen is one of its expansion categories. Material has 3,411 TikTok followers and no shop.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">06</span><h2>Social footprint</h2></div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Platform</th><th>Audience</th><th>Read</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Instagram <span class="num-cell">@materialkitchen</span></td><td class="num-cell">93,200</td><td>Verified, well-run, the brand's genuine equity. Bio leans on press credentials.</td></tr>
+          <tr><td>TikTok <span class="num-cell">@materialkitchen</span></td><td class="num-cell">3,411</td><td>34.7K lifetime likes. One post — "Wooden boards aren't really it" — did ~130K views, so the format works. They just aren't posting into it.</td></tr>
+          <tr><td>Facebook</td><td class="num-cell">3,000</td><td>Dormant. Matters only as the ad account's page asset.</td></tr>
+          <tr><td>Pinterest</td><td class="num-cell">1,400</td><td>Badly under-used for a design-led homewares brand with strong photography.</td></tr>
+          <tr><td>LinkedIn</td><td class="num-cell">1,100</td><td>Founder-story channel; useful for wholesale and retail buyers.</td></tr>
+          <tr><td>YouTube</td><td class="num-cell">100</td><td>22 videos, negligible reach. Shorts is unexploited.</td></tr>
+          <tr><td>Eunice Byun (personal)</td><td class="num-cell">2,260</td><td>The brand's press narrative is founder-led; the founder's own audience is not.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:18px;">The shape here is a brand that mastered one platform in 2019 and never rebuilt for the one that now sells kitchenware. That is a straightforward, non-critical thing to raise, because the fix is a content-repurposing workflow rather than a new budget line.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">07</span><h2>Six openers for the first call</h2></div>
+    <p class="lede">Each one is a specific, checkable observation rather than a pitch — designed so they do the talking.</p>
+
+    <div class="openers">
+      <div class="opener">
+        <span class="idx"></span>
+        <div>
+          <p class="say">"The Guardian just named the MK Free Board best plastic-free board for raw meat — and you're not running a single ad anywhere to capitalise on it. Was that a deliberate pause?"</p>
+          <p class="why">Leads with a compliment they've earned, lands the zero-ads finding without sounding like an audit, and the question is genuinely open — the answer (cash, agency churn, tariffs, a founder who distrusts paid) tells you what kind of engagement this is.</p>
+        </div>
+      </div>
+      <div class="opener">
+        <span class="idx"></span>
+        <div>
+          <p class="say">"Your Amazon spec table currently lists the board's material as polycarbonate. Given the whole product exists to escape plastic, that one field is probably costing you conversions."</p>
+          <p class="why">Highly specific, verifiable in ten seconds while you're on the call, and demonstrates you actually looked. Nothing builds credibility with an Amazon-literate founder faster than a real listing defect.</p>
+        </div>
+      </div>
+      <div class="opener">
+        <span class="idx"></span>
+        <div>
+          <p class="say">"Your reviewers keep asking for a smaller board. You already sell the Midi at $44 on your own site — it just isn't on Amazon."</p>
+          <p class="why">Frames you as revenue-additive rather than fee-additive in the first five minutes, and it's a change they can make without you, which paradoxically makes them more likely to hire you.</p>
+        </div>
+      </div>
+      <div class="opener">
+        <span class="idx"></span>
+        <div>
+          <p class="say">"Every knife SKU in your Amazon store reads 'currently unavailable', and a lot of the knives on your own site are on preorder. Is that a supply issue or a deliberate wind-down?"</p>
+          <p class="why">Shows you looked at both channels and connected them. It's also the question that surfaces their real constraint — if it's supply, no amount of media spend helps, and saying so earns enormous trust.</p>
+        </div>
+      </div>
+      <div class="opener">
+        <span class="idx"></span>
+        <div>
+          <p class="say">"Your 'wooden boards aren't really it' TikTok did about 130K views off a 3,400-follower account. That's the whole thesis of the brand, and it's the only place you've said it in that format."</p>
+          <p class="why">Uses their own best-performing content as the evidence, which makes the social-commerce recommendation feel like their idea. Pairs naturally with the TikTok Shop sizing.</p>
+        </div>
+      </div>
+      <div class="opener">
+        <span class="idx"></span>
+        <div>
+          <p class="say">"You killed the reBoard — a proven bestseller — because of where the microplastics conversation was heading. Most brands wouldn't have. What did the internal argument look like?"</p>
+          <p class="why">Pure relationship-building, no agenda. It flatters a real decision, gets the founder talking about strategy rather than tactics, and tells you how they weigh conviction against revenue — which is exactly what you need to know before proposing anything.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">08</span><h2>What to verify before you commit to numbers</h2></div>
+    <ul class="tight">
+      <li><strong>Meta Ad Library shows active non-political ads only</strong> outside the EU/UK. "Zero active" is solid for today; it is not proof they never ran ads in 2023–2025.</li>
+      <li><strong>The Google category SERP was geo-served to India</strong> from the browser used. The brand-term finding (no US ad unit) is reliable; treat the category ad landscape as indicative only until re-run on a US IP.</li>
+      <li><strong>Search volumes are unverified.</strong> Nothing here comes from Keyword Planner or Helium 10 — get real branded and non-branded volumes before any forecast, especially given the brand-name collision.</li>
+      <li><strong>Crunchbase lists 1–10 employees</strong>, which is almost certainly stale. Confirm team size and who currently owns paid before scoping.</li>
+      <li><strong>Amazon inventory and Prime status change daily.</strong> Re-check the stock counts on the morning of the call so you're quoting live numbers.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Compiled from Material Kitchen's DTC site and Amazon Brand Store and PDP (ASIN B0FFHK44B7), the Meta Ad Library, Google SERPs, and coverage in The Guardian, Boston Globe, Food &amp; Wine, CNN Underscored and Forbes. Figures observed 1 September 2026 and current as of that date.</p>
+  </footer>
+
+</div>
+</body>
+</html>
