@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Material Kitchen Positioning</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --bg: #f7f8f5;
+    --surface: #ffffff;
+    --surface-2: #eef0ea;
+    --text-primary: #14181a;
+    --text-secondary: #4c5650;
+    --text-muted: #82897f;
+    --border: rgba(15,23,20,0.11);
+    --border-strong: rgba(15,23,20,0.20);
+    --blue: #2a78d6;
+    --blue-soft: #dbe9fa;
+    --orange: #eb6834;
+    --orange-soft: #fbe4d8;
+    --aqua: #1baf7a;
+    --aqua-soft: #d7f2e6;
+    --yellow: #eda100;
+    --good: #0ca30c;
+    --warning: #b8790a;
+    --critical: #c1362f;
+    --critical-soft: #fbe1de;
+    --shadow: 0 1px 2px rgba(20,24,26,0.06), 0 8px 24px -12px rgba(20,24,26,0.16);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg: #101312;
+      --surface: #191d1b;
+      --surface-2: #21261f;
+      --text-primary: #f5f6f2;
+      --text-secondary: #c1c7bc;
+      --text-muted: #8b9187;
+      --border: rgba(255,255,255,0.12);
+      --border-strong: rgba(255,255,255,0.22);
+      --blue: #4a94ea;
+      --blue-soft: #1c2d40;
+      --orange: #f0834f;
+      --orange-soft: #3a2419;
+      --aqua: #2ec48c;
+      --aqua-soft: #12332a;
+      --yellow: #e0a930;
+      --good: #35c25a;
+      --warning: #e0a930;
+      --critical: #e8695f;
+      --critical-soft: #3a2220;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg: #101312;
+    --surface: #191d1b;
+    --surface-2: #21261f;
+    --text-primary: #f5f6f2;
+    --text-secondary: #c1c7bc;
+    --text-muted: #8b9187;
+    --border: rgba(255,255,255,0.12);
+    --border-strong: rgba(255,255,255,0.22);
+    --blue: #4a94ea;
+    --blue-soft: #1c2d40;
+    --orange: #f0834f;
+    --orange-soft: #3a2419;
+    --aqua: #2ec48c;
+    --aqua-soft: #12332a;
+    --yellow: #e0a930;
+    --good: #35c25a;
+    --warning: #e0a930;
+    --critical: #e8695f;
+    --critical-soft: #3a2220;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  *{ box-sizing: border-box; }
+  body{
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding-inline: 20px;
+    padding-block: 28px 64px;
+  }
+  .wrap{ max-width: 1180px; margin: 0 auto; }
+  h1,h2,h3{ font-family: "Fraunces", Georgia, serif; text-wrap: balance; margin: 0; }
+  .mono, .tabular{ font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  a{ color: var(--blue); }
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    display: flex; flex-wrap: wrap; gap: 20px 32px; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 22px; border-bottom: 2px solid var(--text-primary);
+    margin-bottom: 28px;
+  }
+  .eyebrow{ font-size: 12.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+  .masthead h1{ font-size: clamp(28px, 4vw, 42px); font-weight: 600; line-height: 1.05; }
+  .masthead .sub{ color: var(--text-secondary); font-size: 15px; max-width: 46ch; margin-top: 8px; line-height: 1.5;}
+  .meta-block{ text-align: right; font-size: 12.5px; color: var(--text-muted); line-height: 1.7; }
+  .meta-block b{ color: var(--text-secondary); }
+
+  section{ margin-bottom: 46px; }
+  .section-head{ display:flex; align-items: baseline; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .section-head h2{ font-size: 23px; font-weight: 600; }
+  .section-head .tag{ font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .section-note{ color: var(--text-secondary); font-size: 14px; line-height: 1.6; max-width: 78ch; margin-top: -6px; margin-bottom: 18px; }
+
+  /* ---------- Stat tiles ---------- */
+  .stat-row{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 12px; }
+  .stat{
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 16px 14px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .stat .label{ font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; }
+  .stat .value{ font-family: "Fraunces", serif; font-size: 30px; font-weight: 600; line-height: 1; }
+  .stat .value small{ font-size: 15px; font-weight: 500; color: var(--text-secondary); }
+  .stat .delta{ font-size: 12.5px; font-weight: 600; }
+  .stat .delta.critical{ color: var(--critical); }
+  .stat .delta.good{ color: var(--good); }
+  .stat .delta.muted{ color: var(--text-muted); font-weight: 500; }
+
+  /* ---------- Cards / grids ---------- */
+  .card{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); }
+  .two-col{ display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; align-items: stretch; }
+  @media (max-width: 860px){ .two-col{ grid-template-columns: 1fr; } }
+
+  /* ---------- Bar chart (competitor revenue) ---------- */
+  .barchart{ display: flex; flex-direction: column; gap: 9px; }
+  .bar-row{ display: grid; grid-template-columns: 128px 1fr 92px; align-items: center; gap: 10px; }
+  .bar-row .name{ font-size: 12.5px; font-weight: 600; color: var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bar-row .name.us{ color: var(--critical); }
+  .bar-track{ position: relative; height: 20px; background: var(--surface-2); border-radius: 5px; overflow:hidden; }
+  .bar-fill{ position: absolute; inset: 0 auto 0 0; border-radius: 5px; }
+  .bar-row .val{ font-size: 12px; text-align: right; color: var(--text-secondary); }
+  .bar-row.us .val{ color: var(--critical); font-weight: 700; }
+  .legend-row{ display:flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+  .legend-row .sw{ display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:5px; vertical-align: middle; }
+
+  /* ---------- opportunity list ---------- */
+  .opp-list{ display:flex; flex-direction:column; gap: 8px; }
+  .opp-row{ display:grid; grid-template-columns: 1fr 150px 60px; gap: 10px; align-items:center; padding: 8px 10px; border-radius: 8px; }
+  .opp-row:nth-child(odd){ background: var(--surface-2); }
+  .opp-row .kw{ font-size: 13px; font-weight: 500; }
+  .opp-track{ height: 14px; background: var(--surface-2); border-radius: 4px; position: relative; overflow:hidden; }
+  .opp-row:nth-child(odd) .opp-track{ background: var(--surface); }
+  .opp-fill{ position:absolute; inset:0 auto 0 0; background: var(--orange); border-radius:4px; }
+  .opp-sv{ font-size: 11.5px; color:var(--text-muted); text-align:right; }
+
+  table{ width:100%; border-collapse: collapse; font-size: 13px; }
+  th{ text-align:left; font-size: 11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); font-weight:600; padding: 8px 10px; border-bottom: 1.5px solid var(--border-strong); }
+  td{ padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td{ border-bottom:none; }
+  td.num, th.num{ text-align:right; }
+  .table-wrap{ overflow-x:auto; }
+  .pill{ display:inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+  .pill.high{ background: var(--critical-soft); color: var(--critical); }
+  .pill.med{ background: var(--orange-soft); color: var(--orange); }
+  .pill.low{ background: var(--aqua-soft); color: var(--aqua); }
+
+  /* ---------- targeting cards ---------- */
+  .comp-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 12px; }
+  .comp-card{ background:var(--surface); border:1px solid var(--border); border-radius: 10px; padding: 14px 15px; box-shadow: var(--shadow); }
+  .comp-card .top{ display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; margin-bottom: 8px;}
+  .comp-card .brand{ font-weight:700; font-size: 14.5px; }
+  .comp-card .asin{ font-size: 10.5px; color: var(--text-muted); }
+  .strength{ font-size: 10.5px; font-weight:700; padding: 2px 7px; border-radius: 99px; white-space:nowrap; }
+  .strength.vw{ background: var(--aqua-soft); color: var(--aqua); }
+  .strength.w{ background: var(--orange-soft); color: var(--orange); }
+  .strength.s, .strength.vs{ background: var(--critical-soft); color: var(--critical); }
+  .comp-card .stats{ display:flex; flex-wrap:wrap; gap: 4px 14px; font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
+  .comp-card .stats b{ color: var(--text-primary); }
+  .action{ font-size: 12px; padding: 7px 9px; border-radius: 7px; line-height:1.4; }
+  .action.conquest{ background: var(--blue-soft); color: var(--blue); }
+  .action.intercept{ background: var(--orange-soft); color: var(--orange); }
+  .action.note{ background: var(--surface-2); color: var(--text-secondary); }
+
+  /* ---------- calculator ---------- */
+  .calc{ display:grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 860px){ .calc{ grid-template-columns: 1fr; } }
+  .field{ display:flex; flex-direction:column; gap: 5px; margin-bottom: 14px; }
+  .field label{ font-size: 12px; font-weight: 600; color: var(--text-secondary); display:flex; justify-content:space-between; }
+  .field label span.hint{ font-weight: 400; color: var(--text-muted); }
+  .field input[type=number], .field input[type=range]{ width:100%; }
+  .field input[type=number]{
+    font-family:"IBM Plex Mono", monospace; font-size: 15px; padding: 8px 10px;
+    border-radius: 7px; border: 1px solid var(--border-strong); background: var(--bg); color: var(--text-primary);
+  }
+  .field input[type=range]{ accent-color: var(--blue); }
+  .out-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .out{ background: var(--surface-2); border-radius: 9px; padding: 12px 14px; }
+  .out .label{ font-size: 11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); font-weight:700; }
+  .out .value{ font-family:"Fraunces",serif; font-size: 22px; font-weight:600; margin-top:2px; }
+  .out .value small{ font-size:12px; font-weight:500; color:var(--text-secondary); font-family:"IBM Plex Sans",sans-serif;}
+  .disclaimer{ font-size: 12px; color: var(--text-muted); background: var(--surface-2); border-radius: 8px; padding: 10px 12px; margin-top: 14px; line-height:1.5; }
+  .disclaimer b{ color: var(--text-secondary); }
+
+  /* velocity gauge */
+  .vel-wrap{ position:relative; margin-top: 34px; }
+  .vel-track{ height: 34px; background: var(--surface-2); border-radius: 8px; position:relative; overflow:hidden; }
+  .vel-seg{ position:absolute; top:0; bottom:0; }
+  .vel-marker{ position:absolute; top:-6px; bottom:-6px; width:2px; background: var(--text-primary); }
+  .vel-marker .lbl{ position:absolute; top:-24px; transform:translateX(-50%); font-size:11px; font-weight:700; white-space:nowrap; }
+  .vel-legend{ display:flex; justify-content:space-between; font-size: 11px; color:var(--text-muted); margin-top: 8px;}
+
+  .checklist{ display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 14px; }
+  .check-card{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; box-shadow:var(--shadow); }
+  .check-card .phase{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--blue); margin-bottom:6px;}
+  .check-card ul{ margin:0; padding-left:18px; font-size:13px; color:var(--text-secondary); line-height:1.7; }
+
+  footer{ border-top: 1px solid var(--border); padding-top: 18px; font-size: 12px; color: var(--text-muted); line-height:1.6; }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+  <div class="masthead">
+    <div>
+      <div class="eyebrow">Amazon US &middot; Cutting Boards &amp; Kitchen Prep</div>
+      <h1>Material Kitchen<br>Keyword &amp; PPC Positioning</h1>
+      <div class="sub">Where ASIN B0HF67GVW7 stands against 12 tracked competitors across 155 relevancy-qualified search terms, and what that implies for spend, targeting, and pacing.</div>
+    </div>
+    <div class="meta-block">
+      <div><b>Niche:</b> Material Kitchen &middot; US &middot; 12 comp.</div>
+      <div><b>Source:</b> DataDive Master Keyword List</div>
+      <div><b>Data as of:</b> Sep 16, 2026</div>
+      <div><b>Min. relevancy:</b> 30% (68 terms excluded)</div>
+    </div>
+  </div>
+
+  <!-- ================= SNAPSHOT ================= -->
+  <section>
+    <div class="section-head"><h2>The snapshot</h2><span class="tag">B0HF67GVW7 vs. the 12-competitor median</span></div>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="label">Search-volume share of voice</div>
+        <div class="value">1.2<small>%</small></div>
+        <div class="delta critical">of 226,994 monthly SV &middot; median comp. holds 42%</div>
+      </div>
+      <div class="stat">
+        <div class="label">Keywords ranking page 1</div>
+        <div class="value">5<small>&nbsp;of 155</small></div>
+        <div class="delta critical">category median is 62 &middot; leaders hold 133&ndash;149</div>
+      </div>
+      <div class="stat">
+        <div class="label">30-day units / revenue</div>
+        <div class="value">47<small>&nbsp;units</small></div>
+        <div class="delta critical">$2,068 vs. median range $41.7k&ndash;93.4k</div>
+      </div>
+      <div class="stat">
+        <div class="label">Listing strength</div>
+        <div class="value" style="font-size:22px; color:var(--critical);">Very Weak</div>
+        <div class="delta muted">1 month old &middot; 5.0★ on 3 reviews &middot; $44.00</div>
+      </div>
+    </div>
+    <p class="section-note" style="margin-top:16px;">Read together, these say the same thing four ways: this is a brand-new listing with almost no organic footprint yet. The 7 keywords we do rank on are branded/typo terms ("mk free cutting board", "mk free board") &mdash; defensive, not demand-capturing. Every generic, high-intent term in the niche is currently uncontested territory for us to win, but every competitor above is already there.</p>
+  </section>
+
+  <!-- ================= COMPETITIVE FIELD ================= -->
+  <section>
+    <div class="section-head"><h2>The competitive field</h2><span class="tag">30-day revenue, log scale &middot; ordered by revenue</span></div>
+    <div class="card">
+      <div class="barchart" id="revChart"></div>
+      <div class="legend-row">
+        <span><span class="sw" style="background:var(--critical);"></span>Us (B0HF67GVW7)</span>
+        <span><span class="sw" style="background:var(--aqua);"></span>Very Weak / Weak</span>
+        <span><span class="sw" style="background:var(--orange);"></span>Strong</span>
+        <span><span class="sw" style="background:var(--blue);"></span>Very Strong</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= OPPORTUNITY ================= -->
+  <section>
+    <div class="section-head"><h2>Where the opportunity is</h2><span class="tag">highest-volume terms we don't rank on at all</span></div>
+    <p class="section-note">These are the ≥50% relevancy terms with the most search volume where B0HF67GVW7 has zero organic rank &mdash; but 7&ndash;10 of the 12 competitors already do. This is the priority list for exact-match Sponsored Products: proven demand, proven relevance, and a wide-open door.</p>
+    <div class="two-col">
+      <div class="card">
+        <div class="opp-list" id="oppList"></div>
+      </div>
+      <div class="card">
+        <h3 style="font-size:15px; margin-bottom:10px;">Relevancy tier vs. total search volume</h3>
+        <div class="barchart" id="tierChart"></div>
+        <p class="section-note" style="margin-top:14px; margin-bottom:0;">Half of all addressable volume (99.5k of 226.9k SV) sits in the 50%-relevancy tier &mdash; broad category terms like <em>"cutting boards non toxic"</em> (65,937 SV) and <em>"non toxic cutting board"</em> (19,209 SV). These carry lower per-term relevancy but the highest absolute reach; the 58&ndash;75% tiers are lower volume but the closest match to the product itself.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= OPPORTUNITY TABLE ================= -->
+  <section>
+    <div class="section-head"><h2>Priority keyword list</h2><span class="tag">top 12 by search volume &middot; not yet ranking &middot; suggested exact-match bid</span></div>
+    <div class="card table-wrap">
+      <table>
+        <thead><tr>
+          <th>Search term</th><th class="num">SV / mo</th><th class="num">Relev.</th><th class="num">Suggested bid</th><th>Bid comp.</th><th class="num">Competitors ranking</th>
+        </tr></thead>
+        <tbody id="oppTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= TARGETING STRATEGY ================= -->
+  <section>
+    <div class="section-head"><h2>Targeting strategy: piggyback on their visibility</h2><span class="tag">product-targeting priority by how beatable each ASIN is</span></div>
+    <p class="section-note">We can't out-rank the category leaders organically yet, so PPC has to do the work of borrowing their traffic. Split spend into two very different plays: <b>conquest</b> the weak/very-weak ASINs with product-targeting &mdash; they're beatable and some (Culiex, Greener Chef) are still pulling real volume despite weak listings &mdash; and <b>intercept</b> the strong ones with Sponsored Brand/Display placements on their PDPs, since we can win clicks there long before we can win rank.</p>
+    <div class="comp-grid" id="compGrid"></div>
+  </section>
+
+  <!-- ================= AD SPEND CALCULATOR ================= -->
+  <section>
+    <div class="section-head"><h2>Ad spend &amp; daily budget</h2><span class="tag">live model &mdash; built from this niche's actual bid data</span></div>
+    <div class="card calc">
+      <div>
+        <div class="field">
+          <label>Monthly revenue target <span class="hint">$/mo &mdash; edit to your real target</span></label>
+          <input type="number" id="inRevenue" value="15000" min="0" step="500">
+        </div>
+        <div class="field">
+          <label>Average selling price <span class="hint tabular" id="lblASP">$44.00</span></label>
+          <input type="range" id="inASP" min="20" max="60" step="0.5" value="44">
+        </div>
+        <div class="field">
+          <label>Share of sales that must come from ads <span class="hint tabular" id="lblAdShare">65%</span></label>
+          <input type="range" id="inAdShare" min="20" max="100" step="5" value="65">
+        </div>
+        <div class="field">
+          <label>Assumed conversion rate <span class="hint tabular" id="lblCVR">10%</span></label>
+          <input type="range" id="inCVR" min="4" max="25" step="0.5" value="10">
+        </div>
+        <div class="field">
+          <label>Avg. CPC (niche median exact-match bid) <span class="hint tabular" id="lblCPC">$1.48</span></label>
+          <input type="range" id="inCPC" min="0.6" max="2.5" step="0.02" value="1.48">
+        </div>
+      </div>
+      <div>
+        <div class="out-grid">
+          <div class="out"><div class="label">Daily ad budget</div><div class="value tabular" id="outDaily">&mdash;</div></div>
+          <div class="out"><div class="label">Monthly ad spend</div><div class="value tabular" id="outMonthly">&mdash;</div></div>
+          <div class="out"><div class="label">Clicks needed / mo</div><div class="value tabular" id="outClicks">&mdash;</div></div>
+          <div class="out"><div class="label">Implied ACOS</div><div class="value tabular" id="outAcos">&mdash;</div></div>
+        </div>
+        <div class="disclaimer">Formula: units = revenue ÷ ASP &rarr; ad-attributed units = units × ad share &rarr; clicks = ad units ÷ CVR &rarr; spend = clicks × CPC. <b>The $15,000/mo figure above is illustrative</b> (roughly one rung below this niche's weakest-selling "Very Weak" competitors) &mdash; swap in your actual revenue target and this whole panel recalculates.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VELOCITY ================= -->
+  <section>
+    <div class="section-head"><h2>Daily sales velocity, once PPC is fully spun up</h2><span class="tag">from current pace to page-1 threshold</span></div>
+    <div class="card">
+      <div class="vel-wrap">
+        <div class="vel-track" id="velTrack"></div>
+        <div id="velMarkers"></div>
+      </div>
+      <div class="vel-legend"><span>0/day</span><span>60/day</span></div>
+      <p class="section-note" style="margin-bottom:0; margin-top:18px;">Today we move <b>1.6 units/day</b> (47/30d). DataDive's launch-score model says reaching page&nbsp;1 on the single biggest term &mdash; <em>"cutting boards non toxic"</em>, 65,937 SV &mdash; needs roughly <b>57 units/day</b> sustained, which is a stretch goal, not a week-one target. A realistic first ramp, once campaigns are live and converting, is <b>15&ndash;25 units/day</b>: that band matches what comparably-weak competitors (Culiex ~37/day, Greener Chef ~55/day) actually move today, and lines up with the easier page-1 threshold on <em>"non toxic cutting board"</em> (19,209 SV, ~16/day needed). Treat 25&rarr;55/day as the 60&ndash;90 day stretch range once reviews and organic rank start compounding.</p>
+    </div>
+  </section>
+
+  <!-- ================= ACTION PLAN ================= -->
+  <section>
+    <div class="section-head"><h2>Next 90 days</h2></div>
+    <div class="checklist">
+      <div class="check-card">
+        <div class="phase">Days 1&ndash;30 &middot; Launch</div>
+        <ul>
+          <li>Exact-match SP campaigns on the 12 priority keywords (table above), bid at or ~10% above suggested median</li>
+          <li>Auto campaign for harvest + negative-keyword discovery</li>
+          <li>Defend branded terms ("mk...") at low CPC &mdash; already converting at rank 2</li>
+        </ul>
+      </div>
+      <div class="check-card">
+        <div class="phase">Days 30&ndash;60 &middot; Piggyback</div>
+        <ul>
+          <li>Product-targeting conquest campaigns on Culiex, Greener Chef, Farberware, Oslo Kitchen, Rubbermaid, Elihome PDPs</li>
+          <li>Sponsored Brand + Display intercept on Epicurean / Freshware / Ziruma / Belwares category placements</li>
+          <li>Reallocate budget toward keywords showing organic rank movement</li>
+        </ul>
+      </div>
+      <div class="check-card">
+        <div class="phase">Days 60&ndash;90 &middot; Compound</div>
+        <ul>
+          <li>Push toward the 25/day velocity band; re-check launch-score thresholds monthly</li>
+          <li>Shift budget mix from broad conquest toward defending newly-won page-1 spots</li>
+          <li>Revisit ACOS target downward as organic share of sales grows</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div><b>Notes on the data:</b> Two ASINs in this competitor set share the "Material" brand name &mdash; B0HF67GVW7 (this analysis's subject) and B0FFHLF7WY (4.3★, 725 units/30d, listed separately). Worth confirming internally whether that second ASIN is a sibling SKU or an unrelated seller before folding it into "our" numbers. All search-volume, relevancy, rank, and bid figures are pulled directly from the DataDive Master Keyword List for the "Material Kitchen" niche (155 keywords ≥30% relevancy, 68 lower-relevancy terms excluded by the niche's own filter) as of Sep&nbsp;16,&nbsp;2026. Revenue-target math in the calculator above is a planning model, not a guarantee &mdash; actual ACOS depends on execution, listing conversion rate, and how quickly organic rank responds.</div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+  // ---------- Competitor revenue bar chart (log scale) ----------
+  var competitors = [
+    {name:'Epicurean', asin:'B0008F6ST4', rev:448634, strength:'vs'},
+    {name:'Freshware', asin:'B0CJB3WCHW', rev:110548, strength:'vs'},
+    {name:'Ziruma', asin:'B07H7TW2Y6', rev:114657, strength:'s'},
+    {name:'Belwares', asin:'B0BMN4LJTG', rev:55085, strength:'s'},
+    {name:'Culiex', asin:'B0FJR2M8F4', rev:47375, strength:'w'},
+    {name:'Greener Chef', asin:'B00MW8NBW2', rev:45792, strength:'vw'},
+    {name:'Material #2', asin:'B0FFHLF7WY', rev:37700, strength:'vw'},
+    {name:'Farberware', asin:'B09ZBJZR4B', rev:11999, strength:'vw'},
+    {name:'Rubbermaid', asin:'B0GR19D349', rev:10996, strength:'vw'},
+    {name:'Oslo Kitchen', asin:'B0GNJ8F378', rev:4718, strength:'w'},
+    {name:'Elihome', asin:'B08R56YHLP', rev:5142, strength:'vw'},
+    {name:'Material (Us)', asin:'B0HF67GVW7', rev:2068, strength:'us'}
+  ].sort(function(a,b){ return b.rev - a.rev; });
+
+  var colorFor = {us:'var(--critical)', vw:'var(--aqua)', w:'var(--aqua)', s:'var(--orange)', vs:'var(--blue)'};
+  var maxLog = Math.log10(500000);
+  var revChart = document.getElementById('revChart');
+  competitors.forEach(function(c){
+    var pct = Math.max(4, (Math.log10(c.rev) / maxLog) * 100);
+    var row = document.createElement('div');
+    row.className = 'bar-row' + (c.strength==='us' ? ' us' : '');
+    row.innerHTML =
+      '<div class="name' + (c.strength==='us'?' us':'') + '">' + esc(c.name) + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%; background:' + colorFor[c.strength] + ';"></div></div>' +
+      '<div class="val tabular">$' + c.rev.toLocaleString() + '</div>';
+    revChart.appendChild(row);
+  });
+
+  // ---------- Relevancy tier chart ----------
+  var tiers = [
+    {label:'75% relevancy', sv:1489},
+    {label:'67% relevancy', sv:6979},
+    {label:'58% relevancy', sv:8728},
+    {label:'50% relevancy', sv:99548},
+    {label:'42% relevancy', sv:41850},
+    {label:'33% relevancy', sv:68400}
+  ];
+  var maxTierSv = Math.max.apply(null, tiers.map(function(t){return t.sv;}));
+  var tierChart = document.getElementById('tierChart');
+  tiers.forEach(function(t){
+    var pct = (t.sv / maxTierSv) * 100;
+    var row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML =
+      '<div class="name">' + t.label + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%; background:var(--blue);"></div></div>' +
+      '<div class="val tabular">' + t.sv.toLocaleString() + '</div>';
+    tierChart.appendChild(row);
+  });
+
+  // ---------- Opportunity list (top 8 by SV, relevancy >= 50%, we don't rank) ----------
+  var opp = [
+    {kw:'cutting boards non toxic', sv:65937, relev:50, bid:null, comp:11},
+    {kw:'non toxic cutting board', sv:19209, relev:50, comp:8},
+    {kw:'safe cutting boards for kitchen non toxic', sv:2181, relev:58, comp:8},
+    {kw:'cutting board non toxic', sv:5199, relev:67, comp:10},
+    {kw:'non plastic cutting boards', sv:5115, relev:42, comp:10},
+    {kw:'composite cutting board', sv:4641, relev:42, comp:10},
+    {kw:'non toxic cutting boards', sv:3891, relev:50, comp:8},
+    {kw:'wood fiber cutting board', sv:3691, relev:42, comp:9}
+  ];
+  var maxOppSv = Math.max.apply(null, opp.map(function(o){return o.sv;}));
+  var oppList = document.getElementById('oppList');
+  opp.forEach(function(o){
+    var pct = (o.sv / maxOppSv) * 100;
+    var row = document.createElement('div');
+    row.className = 'opp-row';
+    row.innerHTML =
+      '<div class="kw">' + esc(o.kw) + ' <span style="color:var(--text-muted); font-size:11px;">(' + o.relev + '% relevant)</span></div>' +
+      '<div class="opp-track"><div class="opp-fill" style="width:' + pct + '%;"></div></div>' +
+      '<div class="opp-sv tabular">' + o.sv.toLocaleString() + '</div>';
+    oppList.appendChild(row);
+  });
+
+  // ---------- Priority keyword table (top 12) ----------
+  var priority = [
+    {kw:'cutting board non toxic', sv:5199, relev:67, bid:170, comp:'HIGH', n:10},
+    {kw:'safe cutting boards for kitchen non toxic', sv:2181, relev:58, bid:167, comp:'HIGH', n:8},
+    {kw:'safest non toxic cutting board', sv:907, relev:58, bid:171, comp:'HIGH', n:7},
+    {kw:'nontoxic cutting board', sv:901, relev:58, bid:171, comp:'HIGH', n:7},
+    {kw:'best non toxic cutting boards', sv:890, relev:58, bid:182, comp:'HIGH', n:10},
+    {kw:'non plastic cutting boards for kitchen', sv:819, relev:58, bid:157, comp:'HIGH', n:7},
+    {kw:'cutting board non plastic', sv:530, relev:67, bid:151, comp:'HIGH', n:10},
+    {kw:'plastic free cutting board non toxic', sv:530, relev:58, bid:155, comp:'HIGH', n:7},
+    {kw:'best cutting board no microplastics', sv:250, relev:67, bid:140, comp:'HIGH', n:9},
+    {kw:'cutting board nontoxic', sv:250, relev:67, bid:161, comp:'HIGH', n:10},
+    {kw:'microplastic free cutting boards', sv:250, relev:67, bid:144, comp:'HIGH', n:8},
+    {kw:'non plastic cutting boards dishwasher safe', sv:250, relev:67, bid:167, comp:'HIGH', n:8}
+  ];
+  var oppTable = document.getElementById('oppTable');
+  priority.forEach(function(p){
+    var tr = document.createElement('tr');
+    var pillClass = p.comp === 'HIGH' ? 'high' : (p.comp === 'MEDIUM' ? 'med' : 'low');
+    tr.innerHTML =
+      '<td>' + esc(p.kw) + '</td>' +
+      '<td class="num tabular">' + p.sv.toLocaleString() + '</td>' +
+      '<td class="num tabular">' + p.relev + '%</td>' +
+      '<td class="num tabular">$' + (p.bid/100).toFixed(2) + '</td>' +
+      '<td><span class="pill ' + pillClass + '">' + p.comp + '</span></td>' +
+      '<td class="num tabular">' + p.n + ' / 12</td>';
+    oppTable.appendChild(tr);
+  });
+
+  // ---------- Competitor targeting cards ----------
+  var strengthLabel = {vw:'Very Weak', w:'Weak', s:'Strong', vs:'Very Strong'};
+  var strengthClass = {vw:'vw', w:'w', s:'s', vs:'vs'};
+  var targeting = [
+    {name:'Culiex', asin:'B0FJR2M8F4', strength:'w', price:'$42.99', rating:'4.2★', sales:'1,102/mo', action:'conquest', note:'Conquest first: weak listing, still selling 1,102/mo &mdash; a live, beatable competitor.'},
+    {name:'Greener Chef', asin:'B00MW8NBW2', strength:'vw', price:'$27.99', rating:'4.7★', sales:'1,636/mo', action:'conquest', note:'Very weak strength despite decent volume &mdash; high-value conquest target.'},
+    {name:'Farberware', asin:'B09ZBJZR4B', strength:'vw', price:'$17.99', rating:'4.6★', sales:'667/mo', action:'conquest', note:'Amazon 1P but very weak footprint (16 KWs on P1) &mdash; secondary conquest.'},
+    {name:'Rubbermaid', asin:'B0GR19D349', strength:'vw', price:'$34.99', rating:'3.9★', sales:'250/mo', action:'conquest', note:'6-month-old listing, weakest rating in the set &mdash; easy conquest.'},
+    {name:'Oslo Kitchen', asin:'B0GNJ8F378', strength:'w', price:'$19.99', rating:'4.3★', sales:'236/mo', action:'conquest', note:'Low sales but broad page-1 presence (62 KWs) &mdash; low-cost PT target.'},
+    {name:'Elihome', asin:'B08R56YHLP', strength:'vw', price:'$36.99', rating:'4.3★', sales:'139/mo', action:'conquest', note:'Lowest sales in the set &mdash; minimal defense expected.'},
+    {name:'Epicurean', asin:'B0008F6ST4', strength:'vs', price:'$33.99', rating:'4.4★ (7,014)', sales:'13,199/mo', action:'intercept', note:'Category leader, 96% share of voice &mdash; intercept via SB/SD on its PDP, don\'t contest rank yet.'},
+    {name:'Freshware', asin:'B0CJB3WCHW', strength:'vs', price:'$21.19', rating:'4.6★ (454)', sales:'5,217/mo', action:'intercept', note:'149 KWs on P1, the widest footprint here &mdash; intercept-only for now.'},
+    {name:'Ziruma', asin:'B07H7TW2Y6', strength:'s', price:'$39.95', rating:'4.4★ (1,364)', sales:'2,870/mo', action:'intercept', note:'Closest price point to us &mdash; good SD comparison-ad target.'},
+    {name:'Belwares', asin:'B0BMN4LJTG', strength:'s', price:'$21.99', rating:'4.6★ (900)', sales:'2,505/mo', action:'intercept', note:'Strong across the board &mdash; intercept, revisit conquest once we have reviews.'}
+  ];
+  var compGrid = document.getElementById('compGrid');
+  targeting.forEach(function(c){
+    var div = document.createElement('div');
+    div.className = 'comp-card';
+    var actionHtml = c.action === 'conquest'
+      ? '<div class="action conquest"><b>Conquest PT</b> &mdash; ' + c.note + '</div>'
+      : '<div class="action intercept"><b>Intercept SB/SD</b> &mdash; ' + c.note + '</div>';
+    div.innerHTML =
+      '<div class="top"><div><div class="brand">' + esc(c.name) + '</div><div class="asin mono">' + c.asin + '</div></div>' +
+      '<div class="strength ' + strengthClass[c.strength] + '">' + strengthLabel[c.strength] + '</div></div>' +
+      '<div class="stats"><span><b>' + c.price + '</b></span><span>' + c.rating + '</span><span><b>' + c.sales + '</b> sales</span></div>' +
+      actionHtml;
+    compGrid.appendChild(div);
+  });
+
+  // ---------- Velocity gauge ----------
+  var velTrack = document.getElementById('velTrack');
+  var velMax = 60;
+  function velSeg(from, to, color){
+    var seg = document.createElement('div');
+    seg.className = 'vel-seg';
+    seg.style.left = (from/velMax*100) + '%';
+    seg.style.width = ((to-from)/velMax*100) + '%';
+    seg.style.background = color;
+    velTrack.appendChild(seg);
+  }
+  velSeg(0, 15, 'var(--critical-soft)');
+  velSeg(15, 25, 'var(--aqua-soft)');
+  velSeg(25, 60, 'var(--surface-2)');
+  var velMarkers = document.getElementById('velMarkers');
+  function velMarker(pos, label, color){
+    var m = document.createElement('div');
+    m.className = 'vel-marker';
+    m.style.left = (pos/velMax*100) + '%';
+    m.style.background = color;
+    m.innerHTML = '<div class="lbl" style="color:' + color + ';">' + label + '</div>';
+    velMarkers.appendChild(m);
+  }
+  velMarker(1.6, 'Today: 1.6', 'var(--critical)');
+  velMarker(16, 'P1 on 19.2k-SV term: 16', 'var(--blue)');
+  velMarker(57, 'P1 on top term: 57', 'var(--text-muted)');
+
+  // ---------- Ad spend calculator ----------
+  var inRevenue = document.getElementById('inRevenue');
+  var inASP = document.getElementById('inASP');
+  var inAdShare = document.getElementById('inAdShare');
+  var inCVR = document.getElementById('inCVR');
+  var inCPC = document.getElementById('inCPC');
+
+  function fmtUSD(n){ return '$' + n.toLocaleString(undefined, {maximumFractionDigits:0}); }
+
+  function recalc(){
+    var revenue = parseFloat(inRevenue.value) || 0;
+    var asp = parseFloat(inASP.value) || 1;
+    var adShare = parseFloat(inAdShare.value) / 100;
+    var cvr = parseFloat(inCVR.value) / 100;
+    var cpc = parseFloat(inCPC.value) || 0;
+
+    document.getElementById('lblASP').textContent = '$' + asp.toFixed(2);
+    document.getElementById('lblAdShare').textContent = Math.round(adShare*100) + '%';
+    document.getElementById('lblCVR').textContent = cvr.toFixed(1).replace(/\.0$/,'') + '%';
+    document.getElementById('lblCPC').textContent = '$' + cpc.toFixed(2);
+
+    var units = revenue / asp;
+    var adUnits = units * adShare;
+    var clicks = cvr > 0 ? adUnits / cvr : 0;
+    var monthlySpend = clicks * cpc;
+    var dailyBudget = monthlySpend / 30;
+    var adRevenue = adUnits * asp;
+    var acos = adRevenue > 0 ? (monthlySpend / adRevenue) * 100 : 0;
+
+    document.getElementById('outDaily').innerHTML = fmtUSD(dailyBudget) + ' <small>/day</small>';
+    document.getElementById('outMonthly').innerHTML = fmtUSD(monthlySpend) + ' <small>/mo</small>';
+    document.getElementById('outClicks').innerHTML = Math.round(clicks).toLocaleString() + ' <small>clicks</small>';
+    document.getElementById('outAcos').innerHTML = acos.toFixed(0) + '<small>%</small>';
+  }
+  [inRevenue, inASP, inAdShare, inCVR, inCPC].forEach(function(el){
+    el.addEventListener('input', recalc);
+  });
+  recalc();
+})();
+</script>
+
+</body>
+</html>
