@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BK Beauty — Deal Discount Forecaster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#FBF9FC; --surface:#FFFFFF; --ink:#241B2F; --muted:#6B6076; --line:#E6DFEA; --line-strong:#CFC3D6;
+  --plum:#7A2E5C; --plum-soft:#F4E7EF; --rose:#E9C8D6;
+  --green:#1C7650; --green-bg:#E1F2E9; --amber:#9C4F12; --amber-bg:#FBEADB; --blue:#2A5787; --blue-bg:#E2EBF5;
+  --lane:#EFE9F2;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#17121D; --surface:#211A29; --ink:#F1EAF4; --muted:#A99CB4; --line:#3A3044; --line-strong:#52455E;
+    --plum:#E38CC0; --plum-soft:#3A2233; --rose:#5A3149;
+    --green:#72D3A5; --green-bg:#16332A; --amber:#F2AC6C; --amber-bg:#3B2816; --blue:#92BBEA; --blue-bg:#1C2A3D;
+    --lane:#2A2233;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#17121D; --surface:#211A29; --ink:#F1EAF4; --muted:#A99CB4; --line:#3A3044; --line-strong:#52455E;
+  --plum:#E38CC0; --plum-soft:#3A2233; --rose:#5A3149;
+  --green:#72D3A5; --green-bg:#16332A; --amber:#F2AC6C; --amber-bg:#3B2816; --blue:#92BBEA; --blue-bg:#1C2A3D;
+  --lane:#2A2233;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums}
+.wrap{max-width:1500px;margin:0 auto;padding:28px 20px 60px}
+h1,h2,h3{font-family:"Bricolage Grotesque","Public Sans",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em;margin:0}
+h1{font-size:clamp(28px,4vw,44px);line-height:1.05}
+h2{font-size:22px;margin-bottom:6px}
+h3{font-size:16px;margin-bottom:4px}
+p{margin:0 0 10px;max-width:74ch}
+.muted{color:var(--muted)}
+header.top{display:grid;grid-template-columns:1fr auto;gap:16px 32px;align-items:end;margin-bottom:22px}
+header.top p{margin-top:10px}
+.today{font-size:13px;color:var(--muted);text-align:right}
+.today b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:20px;color:var(--ink)}
+@media (max-width:700px){header.top{grid-template-columns:1fr}.today{text-align:left}}
+
+/* timeline */
+.timeline{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 14px;margin-bottom:22px}
+.tl-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;align-items:baseline;margin-bottom:14px}
+.tl-scroll{overflow-x:auto}
+.tl{position:relative;min-width:720px;padding-left:170px}
+.tl-months{position:relative;height:22px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.tl-months span{position:absolute;top:0;font-size:12px;color:var(--muted);transform:translateX(-1px);border-left:1px solid var(--line);padding-left:5px;height:22px}
+.lane{position:relative;height:34px}
+.lane-label{position:absolute;left:-170px;width:160px;top:7px;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lane-track{position:absolute;inset:6px 0;background:var(--lane);border-radius:5px}
+.bar{position:absolute;top:6px;height:22px;border-radius:5px;font-size:12px;font-weight:600;display:flex;align-items:center;padding:0 8px;white-space:nowrap;overflow:hidden}
+.bar.window{background:var(--plum-soft);color:var(--plum);border:1px dashed var(--plum)}
+.bar.event{background:var(--plum);color:var(--surface)}
+.bar.ever{background:repeating-linear-gradient(135deg,var(--rose) 0 6px,transparent 6px 12px);color:var(--ink);border:1px solid var(--rose)}
+.marker{position:absolute;top:22px;bottom:0;width:0;border-left:2px solid var(--ink);z-index:2}
+.marker span{position:absolute;top:-20px;left:-24px;font-size:11px;font-weight:700;background:var(--ink);color:var(--bg);padding:1px 6px;border-radius:4px}
+.tl-note{font-size:13px;color:var(--muted);margin-top:10px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-bottom:18px;overflow:hidden}
+.stat{padding:14px 16px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat .v{font-family:"Bricolage Grotesque",sans-serif;font-size:24px;font-weight:700;line-height:1.1}
+.stat .l{font-size:13px;color:var(--muted)}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-bottom:12px}
+.seg{display:flex;flex-wrap:wrap;border:1px solid var(--line-strong);border-radius:9px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:7px 11px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.ctl{display:flex;align-items:center;gap:6px;font-size:13px}
+input[type=search],.ctl input[type=number]{font:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink)}
+input[type=search]{width:190px}
+.btn{font:inherit;font-size:13px;font-weight:600;padding:7px 12px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--plum);border-color:var(--plum);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#1a1020}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#1a1020}}
+.btn:hover{border-color:var(--ink)}
+.spacer{flex:1}
+.toggle{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:6px 10px}
+.toggle input{accent-color:var(--plum)}
+:focus-visible{outline:2px solid var(--plum);outline-offset:2px}
+.status{font-size:13px;color:var(--muted);min-height:20px;margin-bottom:6px}
+
+/* table */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:1480px;font-size:13.5px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+thead th{position:sticky;top:0;background:var(--surface);z-index:3;font-weight:600;font-size:12.5px;color:var(--muted);line-height:1.3}
+thead tr.grp th{color:var(--ink);font-family:"Bricolage Grotesque",sans-serif;font-size:14px;border-bottom:2px solid var(--ink);top:0}
+thead tr.grp th small{display:block;font-family:"Public Sans",sans-serif;font-weight:500;color:var(--muted);font-size:11.5px}
+thead tr.sub th{top:52px}
+th.gstart,td.gstart{border-left:1px solid var(--line-strong)}
+td.num,th.num{text-align:right}
+.sticky{position:sticky;left:0;z-index:2;background:var(--surface);min-width:270px;max-width:300px;box-shadow:1px 0 0 var(--line)}
+thead .sticky{z-index:4}
+.pname{font-weight:600;line-height:1.3}
+.pmeta{font-size:12px;color:var(--muted);margin-top:2px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.tag{font-size:11px;font-weight:600;padding:1px 7px;border-radius:20px;border:1px solid var(--line-strong);color:var(--muted);white-space:nowrap}
+.tag.set{border-color:var(--plum);color:var(--plum)}
+.tag.ever{background:var(--rose);border-color:var(--rose);color:var(--ink)}
+.tag.dup{border-style:dashed}
+.why-btn{margin-top:6px;font:inherit;font-size:12px;font-weight:600;color:var(--plum);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.cellin{display:flex;align-items:center;gap:2px;justify-content:flex-end}
+.cellin input{width:74px;font:inherit;font-size:13.5px;text-align:right;padding:5px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.cellin input.sm{width:56px}
+.cellin input:hover{border-color:var(--line-strong)}
+.cellin input:focus{border-color:var(--plum);outline:none;box-shadow:0 0 0 2px var(--plum-soft)}
+.cellin input::placeholder{color:var(--muted);font-size:12px}
+.cellin .u{color:var(--muted);font-size:12px}
+.edit-hint{background:var(--plum-soft)}
+.eg{font-weight:700}
+.chip{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:6px;line-height:1.3;white-space:nowrap}
+.chip.match{background:var(--green-bg);color:var(--green)}
+.chip.higher{background:var(--amber-bg);color:var(--amber)}
+.chip.lower{background:var(--blue-bg);color:var(--blue)}
+.chip.none{color:var(--muted);font-weight:500;padding-left:0}
+.proj{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:17px;line-height:1.1}
+.proj.hot{color:var(--amber)}
+.sub{font-size:11.5px;color:var(--muted);line-height:1.35;margin-top:2px}
+.sub b{color:var(--ink);font-weight:600}
+.na{color:var(--muted);font-size:12px}
+tr.why td{background:var(--bg);padding:12px 16px 14px}
+tr.why .rgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px 24px;max-width:1200px}
+tr.why h4{margin:0 0 3px;font-size:13px}
+tr.why p{font-size:13px;margin:0}
+tbody tr.row:hover td{background:var(--bg)}
+tbody tr.row:hover td.sticky{background:var(--bg)}
+
+/* legend + method */
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;color:var(--muted);margin:12px 0 30px}
+.legend span{display:flex;align-items:center;gap:6px}
+.method{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:26px 40px;border-top:2px solid var(--ink);padding-top:22px}
+.method p,.method li{font-size:14px}
+.method ul{padding-left:18px;margin:6px 0}
+.formula{font-family:"Bricolage Grotesque",sans-serif;font-size:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0 10px}
+.formula small{display:block;font-family:"Public Sans",sans-serif;font-size:12.5px;color:var(--muted);margin-top:4px}
+.empty{padding:26px;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion: no-preference){.bar{transition:opacity .2s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <h1>BK Beauty deal discount forecaster</h1>
+    <p class="muted">How today's evergreen set pricing feeds Amazon's lookback windows, and how much deeper the Prime Big Deal Days, Black Friday / Cyber Monday and Prime Exclusive discounts will need to go as a result. Edit any current price, target or Amazon ask and every projection updates.</p>
+  </div>
+  <div class="today">Analysis date<b>Sep 24, 2026</b></div>
+</header>
+
+<section class="timeline" aria-labelledby="tlh">
+  <div class="tl-head">
+    <h2 id="tlh">What Amazon's lookback sees</h2>
+    <span class="muted" style="font-size:13px">Evergreen prices running now sit inside every window below</span>
+  </div>
+  <div class="tl-scroll"><div class="tl" id="tl"></div></div>
+  <p class="tl-note">The BFCM 60-day window (Sep 20 – Nov 18) also covers the Oct 6–7 PBDD deal days. Tick “Count the PBDD deal price in BFCM lookback” below to see that worst case.</p>
+</section>
+
+<section class="stats" id="stats" aria-label="Summary"></section>
+
+<div class="controls">
+  <div class="seg" role="group" aria-label="Filter rows" id="filters"></div>
+  <input type="search" id="q" placeholder="Search SKU, ASIN or name" aria-label="Search">
+  <label class="toggle"><input type="checkbox" id="stack"> Count the PBDD deal price in BFCM lookback</label>
+</div>
+<div class="controls">
+  <span class="ctl">Set target % off for shown rows
+    <input type="number" id="bulkPct" min="0" max="90" step="0.5" value="20" style="width:70px" aria-label="Bulk target percent">
+    <button class="btn" id="bulkApply">Apply</button></span>
+  <button class="btn" id="matchRetail" title="Sets every shown row's current price equal to retail">Remove evergreen discounts (shown rows)</button>
+  <button class="btn" id="reset">Reset to file data</button>
+  <span class="spacer"></span>
+  <button class="btn primary" id="dl">Download Excel (.xlsx)</button>
+</div>
+<div class="status" id="status" role="status" aria-live="polite"></div>
+
+<div class="tablewrap">
+<table id="grid">
+  <thead>
+    <tr class="grp">
+      <th class="sticky" rowspan="2" style="vertical-align:bottom">Product</th>
+      <th colspan="3" class="gstart">Pricing<small>Current price is editable</small></th>
+      <th colspan="2" class="gstart">Brand target<small>% off retail (MSRP)</small></th>
+      <th colspan="3" class="gstart">PBDD<small>Prime Big Deal Days, Oct 6–7 (30-day lookback)</small></th>
+      <th colspan="3" class="gstart">BFCM<small>Black Friday / Cyber Monday, Nov 19–30 (30 &amp; 60-day)</small></th>
+      <th colspan="3" class="gstart">PED<small>Prime Exclusive Discount, for rows with no event eligibility</small></th>
+    </tr>
+    <tr class="sub">
+      <th class="num gstart">Retail (MSRP)</th><th class="num">Current price</th><th class="num">Evergreen discount</th>
+      <th class="num gstart">Target sale price</th><th class="num">Target % off</th>
+      <th class="num gstart">Amazon min ask</th><th>Ask vs target</th><th>Projected deeper discount</th>
+      <th class="num gstart">Amazon min ask</th><th>Ask vs target</th><th>Projected deeper discount</th>
+      <th class="num gstart">PED %</th><th>PED vs target</th><th>Projected deeper discount</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<div class="legend">
+  <span><i class="chip match">Matches target</i> Amazon's ask equals the brand target</span>
+  <span><i class="chip higher">Higher than target</i> Amazon wants more than the brand planned</span>
+  <span><i class="chip lower">Lower than target</i> Brand target already beats the ask</span>
+  <span><span class="tag ever">Evergreen discount</span> Current price below MSRP today</span>
+  <span><span class="tag dup">Duplicate ASIN</span> Two SKU rows point to one ASIN</span>
+</div>
+
+<section class="method" aria-labelledby="mh">
+  <div>
+    <h2 id="mh">How the projection works</h2>
+    <p>Amazon checks the lowest price an item sold at during the lookback window and asks for its minimum discount off <em>that</em> price, not off MSRP. Single brushes sell at MSRP, so the reference price is MSRP and the ask lands exactly where Amazon states it. Sets and bundles are running evergreen discounts from Sep 24 onward, so the reference price is already lower, and the same ask produces a deeper cut against MSRP.</p>
+    <div class="formula">Projected % off MSRP = 1 − (1 − evergreen %) × (1 − Amazon ask %)
+      <small>Projected deal price = current price × (1 − Amazon ask %). Extra depth = projected % − ask %, which is 0 whenever current price equals retail.</small></div>
+    <p>Example: Angie Hot &amp; Flashy 7-piece set. MSRP $130, current $120 (7.7% evergreen). Amazon's 20% BFCM ask is measured from $120, so the deal price is $96.00, which is 26.2% off MSRP: 6.2 points deeper than the ask and 6.2 points past a 20% brand target.</p>
+  </div>
+  <div>
+    <h3>Why the windows matter</h3>
+    <ul>
+      <li><b>PBDD (Oct 6–7):</b> the 30-day window runs Sep 6 – Oct 5. Any evergreen price live between now and Oct 5 becomes the reference.</li>
+      <li><b>BFCM (from Nov 19):</b> the 30-day window runs Oct 20 – Nov 18 and the 60-day window Sep 20 – Nov 18. Both include today's evergreen prices.</li>
+      <li><b>Stacking risk:</b> the 60-day BFCM window also contains the PBDD deal price. If Amazon uses it as the reference, the BFCM cut compounds: 1 − (1 − evergreen) × (1 − PBDD) × (1 − BFCM).</li>
+      <li><b>PED:</b> configured for SKUs with no PBDD or BFCM ask. Its 30-day reference behaves the same way.</li>
+    </ul>
+    <h3 style="margin-top:14px">Reading the results</h3>
+    <p>If the projection is well above the brand target, the choices are to accept the deeper cut, or to return the set to MSRP early enough that the evergreen price ages out of the window. Use “Remove evergreen discounts” to see the effect instantly. The model forecasts pressure; Amazon's final asks in Seller Central are the source of truth.</p>
+    <p class="muted" style="font-size:13px">Data notes: “-%” for BK-X-HOF-T5-POUCH PBDD is read as not eligible. BKB108 and BKB112 share ASINs with their “-Barcoded” rows. Target % defaults to 20% as an editable placeholder because the source file left it blank.</p>
+  </div>
+</section>
+</div>
+
+<script>
+const SOURCE = [
+ ["BK-X-HOF-7PC","B0CW2C8VQP","Angie Hot & Flashy Makeup Brush Set, 7 Face & Eye Brushes",130,120,null,0.20,null],
+ ["BK-X-HOF-A506","B0CW27381N","A506 Under Eye Concealer Brush, Angie Hot & Flashy",24,24,0.40,0.33,null],
+ ["BK-X-HOF-A507","B0D15R61NB","Angie Hot & Flashy A507 Angled Blush Brush",28,28,0.24,0.20,null],
+ ["BK-X-HOF-T5-POUCH","B0CW2939T4","Angie Hot & Flashy Travel Makeup Brush Set, 5 Brushes",130,130,null,0.20,null],
+ ["BK-X-NIKKI-7PC","B0D7QSTZLZ","Nikki La Rose Pro Artist Makeup Brush Set, 7 Brushes",206,180,0.30,0.20,null],
+ ["BK-X-NIKKI-N14","B0FDG2GC9G","N14 Petite Precision Concealer Brush, Nikki La Rose",32,32,0.20,0.20,null],
+ ["BK-X-NIKKI-N16","B0FDFW97CL","N16 Pro Concealer Brush For Under Eye & Spot Concealing",28,28,0.24,0.20,null],
+ ["BK-X-NIKKI-N17","B0FDFRXWPQ","N17 Multi-Pro Face Brush For Foundation, Bronzer & Blush",38,38,0.24,0.20,null],
+ ["BK-X-NIKKI2-8PC","B0G49ZDY48","Nikki La Rose Pro Artist Brush Set Vol. 2, 8 Brushes",226,199,null,null,0.20],
+ ["BKB-T5-POUCH","B0DDLCN2FX","Travel Makeup Brush Set With Pouch, 5 Face & Eye Brushes",125,125,null,0.30,null],
+ ["BKB101","B0BWZH1M1W","101 Contoured Foundation Brush For Liquid & Cream Makeup",34,34,0.30,0.20,null],
+ ["BKB106-Barcoded","B0F1PWJ5Z1","106 Round Foundation Brush For Liquid & Cream Foundation",34,34,0.24,0.20,null],
+ ["BKB108-Barcoded","B0F1QC7B3H","108 Precision Powder Brush For Under Eye Setting",30,30,0.24,0.20,null],
+ ["BKB109","B0CW266SZ1","109 Mini Contoured Foundation Brush For Liquid & Cream",32,32,0.24,0.20,null],
+ ["BKB110","B0F1QDGMGM","110 Large Concealer Brush For Under Eye Blending",30,30,0.24,0.20,null],
+ ["BKB112-Barcoded","B0F1QH12WK","112 Small Angled Blush Brush For Powder, Cream & Liquid",28,28,0.24,0.20,null],
+ ["BKB114","B0FDG3T8SR","114 Dual-Sided Concealer Brush",32,32,null,null,0.20],
+ ["BKB115","B0FDFVZ5ZV","115 Medium Contoured Foundation Brush",33,33,0.24,0.23,null],
+ ["BKB116","B0FHG9KVNP","116 Small Round Complexion Brush",30,30,0.24,0.20,null],
+ ["BKBCCT3","B0DQ96KD3D","Core Complexion Trio Makeup Brush Set, 3 Face Brushes",95,85,null,0.15,null],
+ ["BKBCLEE4","B0CW2C23X7","Core Line Extension Eyeshadow Brush Set, 4 Eye Brushes",66,60,0.27,0.20,null],
+ ["BKBCLEF5","B0CW2BNZTJ","Core Line Extension Face Set (5Pc)",152,140,0.31,0.20,null],
+ ["BKBES5","B0CFDBXC1L","Essentials Eyeshadow Brush Set, 5 Eye Brushes For Blending",85,80,null,0.20,null],
+ ["BKBFS2","B0CW26MGQ5","Large Buffer & Round Foundation Brush Set, 2 Face Brushes",72,65,null,0.20,null],
+ ["BKBFS4-101","B0CFCVPHQS","Essentials Face Brush Set, 4 Vegan Cruelty-Free Brushes",140,130,null,0.20,null],
+ ["BKBHE5","B0CW2B6NQJ","Eyeshadow Brush Set For Hooded & Smaller Eyes, 5 Brushes",80,72,null,0.40,null],
+ ["BKBPC5","B0CW28FX1V","Precision Brush Collection, 5 Face & Eye Makeup Brushes",111,95,null,0.34,null],
+ ["BKB108","B0F1QC7B3H","108 Precision Powder Brush For Under Eye Setting",30,30,0.24,0.20,null],
+ ["BKB112","B0F1QH12WK","112 Small Angled Blush Brush For Powder, Cream & Liquid",28,28,0.24,0.20,null]
+];
+const DEFAULT_TARGET = 0.20;
+const fresh = () => SOURCE.map(([sku,asin,name,retail,current,pbdd,bfcm,ped]) => ({sku,asin,name,retail,current,targetPct:DEFAULT_TARGET,pbdd,bfcm,ped}));
+const KEY = "bkb-discount-forecaster-v1";
+let state, stack = false, filter = "all", query = "";
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && Array.isArray(s.rows) && s.rows.length === SOURCE.length) { state = s.rows; stack = !!s.stack; } } catch(e) {}
+if (!state) state = fresh();
+function persist(){ try { localStorage.setItem(KEY, JSON.stringify({rows:state, stack})); } catch(e) {} }
+
+const EVENTS = [
+  {k:"pbdd", label:"PBDD", full:"Prime Big Deal Days", win:"30-day (Sep 6 – Oct 5)"},
+  {k:"bfcm", label:"BFCM", full:"Black Friday / Cyber Monday", win:"30 & 60-day (Sep 20 – Nov 18)"},
+  {k:"ped",  label:"PED",  full:"Prime Exclusive Discount", win:"30-day"}
+];
+const isSet = r => /\bset\b|trio|collection|\d+\s*pc\b|\d+pc/i.test(r.name + " " + r.sku);
+const asinCount = () => state.reduce((m,r)=> (m[r.asin]=(m[r.asin]||0)+1, m), {});
+const $ = s => document.querySelector(s);
+const money = v => v==null||isNaN(v) ? "—" : "$" + v.toFixed(2);
+const pct = (v,d=1) => v==null||isNaN(v) ? "—" : (v*100).toFixed(d).replace(/\.0$/,"") + "%";
+const pts = v => (v>=0?"+":"−") + Math.abs(v*100).toFixed(1) + " pts";
+const round4 = v => Math.round(v*10000)/10000;
+
+function compute(r){
+  const ref = Math.min(r.current, r.retail);
+  const eg = r.retail > 0 ? Math.max(0, 1 - ref / r.retail) : 0;
+  const out = {eg, ref, ev:{}};
+  for (const e of EVENTS){
+    const ask = r[e.k];
+    if (ask == null){ out.ev[e.k] = null; continue; }
+    let base = ref, stacked = false;
+    if (e.k === "bfcm" && stack && r.pbdd != null){ base = ref * (1 - r.pbdd); stacked = true; }
+    const deal = base * (1 - ask);
+    const proj = r.retail > 0 ? 1 - deal / r.retail : 0;
+    out.ev[e.k] = {ask, base, deal, proj, extra: proj - ask, stacked};
+  }
+  return out;
+}
+function vsTarget(ask, target){
+  if (ask == null) return null;
+  if (target == null) return {cls:"none", text:"No target set"};
+  const d = ask - target;
+  if (Math.abs(d) < 0.0005) return {cls:"match", text:"Matches target"};
+  return d > 0 ? {cls:"higher", text:"Higher than target (" + pts(d) + ")"} : {cls:"lower", text:"Lower than target (" + pts(d) + ")"};
+}
+function vsLabelPlain(ask, target){
+  if (ask == null || target == null) return "";
+  const d = ask - target;
+  if (Math.abs(d) < 0.0005) return "Matches target";
+  return d > 0 ? "Higher than target" : "Lower than target";
+}
+function rationale(r, c, e){
+  const x = c.ev[e.k];
+  if (!x) {
+    if (e.k === "ped") return (r.pbdd!=null || r.bfcm!=null) ? "Not used: this SKU already has a PBDD or BFCM ask." : "No PED set yet. Enter a PED % to project it.";
+    return "Not eligible: Amazon has not asked for a " + e.label + " discount on this SKU.";
+  }
+  const t = r.targetPct;
+  const tgt = t==null ? "" : (x.proj - t > 0.0005 ? " That is " + pts(x.proj - t) + " past the " + pct(t) + " brand target." : Math.abs(x.proj - t) <= 0.0005 ? " That lands exactly on the " + pct(t) + " brand target." : " The " + pct(t) + " brand target still covers it (" + pts(x.proj - t) + ").");
+  if (c.eg === 0 && !x.stacked) return "Sells at MSRP (" + money(r.retail) + ") throughout the " + e.win + " lookback, so Amazon's " + pct(x.ask) + " ask is measured from MSRP: deal price " + money(x.deal) + ", " + pct(x.proj) + " off. No extra depth." + tgt;
+  let s = "";
+  if (c.eg > 0) s += "The evergreen price of " + money(c.ref) + " (" + pct(c.eg) + " off MSRP) runs inside the " + e.win + " lookback. ";
+  if (x.stacked) s += "The Oct 6–7 PBDD deal price of " + money(x.base) + " also falls inside the 60-day window, so it becomes the reference. ";
+  s += "Amazon measures its " + pct(x.ask) + " ask from " + money(x.base) + ", not " + money(r.retail) + ", so the deal price is " + money(x.deal) + " = " + pct(x.proj) + " off MSRP, " + pts(x.extra) + " deeper than the ask." + tgt;
+  return s;
+}
+
+/* ---------- timeline ---------- */
+function buildTimeline(){
+  const start = new Date(2026,7,25), end = new Date(2026,11,4), span = end - start;
+  const P = d => ((d - start) / span * 100);
+  const D = (m,d) => new Date(2026,m-1,d);
+  const bar = (cls, a, b, txt) => `<div class="bar ${cls}" style="left:${P(a)}%;width:${P(b)-P(a)}%" title="${txt}">${txt}</div>`;
+  const lane = (label, inner) => `<div class="lane"><div class="lane-label" title="${label}">${label}</div><div class="lane-track"></div>${inner}</div>`;
+  const months = [[9,1,"Sep"],[10,1,"Oct"],[11,1,"Nov"],[12,1,"Dec"]].map(([m,d,t])=>`<span style="left:${P(D(m,d))}%">${t}</span>`).join("");
+  $("#tl").innerHTML =
+    `<div class="tl-months">${months}</div>` +
+    lane("Evergreen set prices", bar("ever", D(8,25), D(12,4), "Current price live on sets &amp; bundles")) +
+    lane("PBDD", bar("window", D(9,6), D(10,6), "30-day lookback Sep 6 – Oct 5") + bar("event", D(10,6), D(10,8), "Oct 6–7")) +
+    lane("BFCM 30-day", bar("window", D(10,20), D(11,19), "Oct 20 – Nov 18") + bar("event", D(11,19), D(12,1), "Nov 19–30")) +
+    lane("BFCM 60-day", bar("window", D(9,20), D(11,19), "60-day lookback Sep 20 – Nov 18") + bar("event", D(11,19), D(12,1), "Nov 19–30")) +
+    `<div class="marker" style="left:calc(170px + (100% - 170px) * ${P(D(9,24))/100})"><span>Today</span></div>`;
+}
+
+/* ---------- table ---------- */
+const FILTERS = [["all","All"],["sets","Sets & bundles"],["singles","Single brushes"],["ever","Evergreen discount"],["pbdd","PBDD eligible"],["bfcm","BFCM eligible"],["ped","PED only"]];
+function buildFilters(){
+  $("#filters").innerHTML = FILTERS.map(([k,t])=>`<button data-f="${k}" aria-pressed="${k===filter}">${t}</button>`).join("");
+  $("#filters").onclick = ev => { const b = ev.target.closest("button"); if(!b) return; filter = b.dataset.f; [...$("#filters").children].forEach(x=>x.setAttribute("aria-pressed", x===b)); applyFilter(); };
+}
+function numInput(i, field, val, opts={}){
+  const v = val==null ? "" : (opts.pct ? round4(val*100) : val.toFixed(2));
+  return `<div class="cellin">${opts.pct?"":'<span class="u">$</span>'}<input type="number" inputmode="decimal" class="${opts.pct?"sm":""}" data-i="${i}" data-f="${field}" value="${v}" min="0" ${opts.pct?'max="95" step="0.5"':'step="0.01"'} placeholder="${opts.ph||""}" aria-label="${opts.aria}">${opts.pct?'<span class="u">%</span>':""}</div>`;
+}
+function buildRows(){
+  const tb = $("#tbody");
+  tb.innerHTML = state.map((r,i)=>{
+    const evCells = EVENTS.map(e=>`
+      <td class="num gstart">${numInput(i, e.k, r[e.k], {pct:true, ph:e.k==="ped"?"—":"n/a", aria:r.sku+" "+e.label+" percent"})}</td>
+      <td data-o="${e.k}-vs"></td>
+      <td><div data-o="${e.k}-proj"></div></td>`).join("");
+    return `<tr class="row" data-i="${i}">
+      <td class="sticky"><div class="pname">${esc(r.name)}</div><div class="pmeta">${esc(r.sku)}<br>${esc(r.asin)}</div><div class="tags" data-o="tags"></div>
+        <button class="why-btn" data-why="${i}" aria-expanded="false">Show rationale</button></td>
+      <td class="num gstart">${money(r.retail)}</td>
+      <td class="num">${numInput(i,"current",r.current,{aria:r.sku+" current price"})}</td>
+      <td class="num"><div class="eg" data-o="eg"></div><div class="sub" data-o="egsub"></div></td>
+      <td class="num gstart">${numInput(i,"targetPrice", r.targetPct==null?null:r.retail*(1-r.targetPct), {aria:r.sku+" target sale price", ph:"—"})}</td>
+      <td class="num">${numInput(i,"targetPct",r.targetPct,{pct:true, ph:"—", aria:r.sku+" target percent off"})}</td>
+      ${evCells}
+    </tr>
+    <tr class="why" data-why-row="${i}" hidden><td colspan="15"><div class="rgrid" data-o="why"></div></td></tr>`;
+  }).join("") + `<tr class="emptyrow" hidden><td colspan="15" class="empty">No SKUs match this filter. Clear the search or pick “All”.</td></tr>`;
+  state.forEach((_,i)=>updateRow(i));
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function updateRow(i){
+  const r = state[i], c = compute(r), tr = document.querySelector(`tr.row[data-i="${i}"]`);
+  const o = k => tr.querySelector(`[data-o="${k}"]`);
+  const dup = asinCount()[r.asin] > 1;
+  o("tags").innerHTML = (isSet(r)?'<span class="tag set">Set / bundle</span>':'<span class="tag">Single brush</span>') +
+    (c.eg>0?'<span class="tag ever">Evergreen discount</span>':"") + (dup?'<span class="tag dup">Duplicate ASIN</span>':"");
+  o("eg").textContent = pct(c.eg);
+  o("egsub").textContent = c.eg>0 ? money(r.retail - c.ref) + " off today" : "Full price";
+  for (const e of EVENTS){
+    const x = c.ev[e.k], vs = vsTarget(r[e.k], r.targetPct);
+    o(e.k+"-vs").innerHTML = vs ? `<span class="chip ${vs.cls}">${vs.text}</span>` : `<span class="na">${e.k==="ped" && (r.pbdd!=null||r.bfcm!=null) ? "Not needed" : "Not eligible"}</span>`;
+    if (!x){ o(e.k+"-proj").innerHTML = '<span class="na">—</span>'; continue; }
+    const overT = r.targetPct!=null && x.proj - r.targetPct > 0.0005;
+    o(e.k+"-proj").innerHTML = `<div class="proj ${x.extra>0.0005?"hot":""}">${pct(x.proj)}</div>
+      <div class="sub">Deal price <b>${money(x.deal)}</b><br>${x.extra>0.0005 ? pts(x.extra)+" from lookback" : "No extra depth"}${x.stacked?" (stacked)":""}${r.targetPct!=null ? "<br>"+(overT? pts(x.proj-r.targetPct)+" vs target" : "Within target") : ""}</div>`;
+  }
+  document.querySelector(`tr[data-why-row="${i}"] [data-o="why"]`).innerHTML =
+    EVENTS.map(e=>`<div><h4>${e.full}</h4><p>${esc(rationale(r,c,e))}</p></div>`).join("");
+}
+function applyFilter(){
+  const counts = asinCount(); let shown = 0;
+  state.forEach((r,i)=>{
+    const c = compute(r);
+    let ok = filter==="all" || (filter==="sets"&&isSet(r)) || (filter==="singles"&&!isSet(r)) || (filter==="ever"&&c.eg>0) ||
+      (filter==="pbdd"&&r.pbdd!=null) || (filter==="bfcm"&&r.bfcm!=null) || (filter==="ped"&&r.pbdd==null&&r.bfcm==null);
+    if (ok && query) ok = (r.sku+" "+r.asin+" "+r.name).toLowerCase().includes(query);
+    const tr = document.querySelector(`tr.row[data-i="${i}"]`), wr = document.querySelector(`tr[data-why-row="${i}"]`);
+    tr.hidden = !ok; if (!ok) wr.hidden = true; else wr.hidden = tr.querySelector(".why-btn").getAttribute("aria-expanded")!=="true";
+    if (ok) shown++;
+  });
+  document.querySelector(".emptyrow").hidden = shown>0;
+}
+const visibleIdx = () => state.map((_,i)=>i).filter(i=>!document.querySelector(`tr.row[data-i="${i}"]`).hidden);
+
+function renderStats(){
+  const cs = state.map(compute);
+  const ever = cs.filter(c=>c.eg>0);
+  const avgEg = ever.length ? ever.reduce((a,c)=>a+c.eg,0)/ever.length : 0;
+  const bf = state.map((r,i)=>({r,x:cs[i].ev.bfcm})).filter(o=>o.x);
+  const over = state.filter((r,i)=> r.targetPct!=null && EVENTS.some(e=>cs[i].ev[e.k] && cs[i].ev[e.k].proj - r.targetPct > 0.0005)).length;
+  const deep = bf.reduce((m,o)=>!m||o.x.proj>m.x.proj?o:m, null);
+  const lifted = cs.filter(c=>EVENTS.some(e=>c.ev[e.k] && c.ev[e.k].extra>0.0005)).length;
+  const items = [
+    [state.length, "SKU rows (" + Object.keys(asinCount()).length + " unique ASINs)"],
+    [ever.length, "on evergreen discount, avg " + pct(avgEg) + " off"],
+    [lifted, "SKUs pushed deeper by the lookback"],
+    [over, "SKUs projected past their target"],
+    [deep ? pct(deep.x.proj) : "—", deep ? "deepest BFCM projection (" + deep.r.sku + ")" : "deepest BFCM projection"],
+    [state.filter(r=>r.pbdd!=null).length + " / " + state.filter(r=>r.bfcm!=null).length + " / " + state.filter(r=>r.pbdd==null&&r.bfcm==null).length, "PBDD / BFCM / PED-only SKUs"]
+  ];
+  $("#stats").innerHTML = items.map(([v,l])=>`<div class="stat"><div class="v">${v}</div><div class="l">${esc(l)}</div></div>`).join("");
+}
+function refreshAll(){ state.forEach((_,i)=>updateRow(i)); renderStats(); applyFilter(); persist(); }
+
+/* ---------- events ---------- */
+$("#tbody").addEventListener("input", ev=>{
+  const inp = ev.target; if (!inp.dataset || inp.dataset.f==null) return;
+  const i = +inp.dataset.i, f = inp.dataset.f, r = state[i], raw = inp.value.trim(), n = parseFloat(raw);
+  if (f==="current"){ if (raw==="" || isNaN(n) || n<0) return; r.current = n; }
+  else if (f==="targetPct"){
+    r.targetPct = raw===""||isNaN(n) ? null : Math.min(n,95)/100;
+    const tp = document.querySelector(`input[data-i="${i}"][data-f="targetPrice"]`);
+    tp.value = r.targetPct==null ? "" : (r.retail*(1-r.targetPct)).toFixed(2);
+  } else if (f==="targetPrice"){
+    r.targetPct = raw===""||isNaN(n) ? null : Math.max(0, 1 - n/r.retail);
+    const tp = document.querySelector(`input[data-i="${i}"][data-f="targetPct"]`);
+    tp.value = r.targetPct==null ? "" : round4(r.targetPct*100);
+  } else { r[f] = raw===""||isNaN(n) ? null : Math.min(n,95)/100; }
+  updateRow(i); renderStats(); persist();
+});
+$("#tbody").addEventListener("change", ev=>{
+  const inp = ev.target; if (inp.dataset.f==="current" && (inp.value.trim()==="" || isNaN(parseFloat(inp.value)))) inp.value = state[+inp.dataset.i].current.toFixed(2);
+  if (inp.dataset.f) applyFilter();
+});
+$("#tbody").addEventListener("click", ev=>{
+  const b = ev.target.closest(".why-btn"); if (!b) return;
+  const open = b.getAttribute("aria-expanded")!=="true";
+  b.setAttribute("aria-expanded", open); b.textContent = open ? "Hide rationale" : "Show rationale";
+  document.querySelector(`tr[data-why-row="${b.dataset.why}"]`).hidden = !open;
+});
+$("#q").addEventListener("input", e=>{ query = e.target.value.trim().toLowerCase(); applyFilter(); });
+$("#stack").checked = stack;
+$("#stack").addEventListener("change", e=>{ stack = e.target.checked; refreshAll(); say(stack ? "BFCM now uses the PBDD deal price as its reference where both apply." : "BFCM reference is back to the evergreen price."); });
+$("#bulkApply").addEventListener("click", ()=>{
+  const n = parseFloat($("#bulkPct").value); if (isNaN(n)) { say("Enter a target % first."); return; }
+  const idx = visibleIdx(); idx.forEach(i=> state[i].targetPct = Math.min(n,95)/100); buildRows(); refreshAll(); say("Target set to " + n + "% on " + idx.length + " rows.");
+});
+$("#matchRetail").addEventListener("click", ()=>{
+  const idx = visibleIdx(); idx.forEach(i=> state[i].current = state[i].retail); buildRows(); refreshAll(); say("Current price set to retail on " + idx.length + " rows. Projections now show no extra depth from evergreen pricing.");
+});
+$("#reset").addEventListener("click", ()=>{ state = fresh(); stack = false; $("#stack").checked = false; buildRows(); refreshAll(); say("Restored the original file data."); });
+function say(t){ $("#status").textContent = t; }
+
+/* ---------- Excel export ---------- */
+function buildWorkbook(){
+  const H = ["SKU","ASIN","Product Name","Type","Retail Price (MSRP)","Current Price","Evergreen Discount %","Evergreen Tag","Target Sale Price","Target % Off",
+    "PBDD Amazon Min %","PBDD vs Target","PBDD Projected % Off MSRP","PBDD Projected Deal Price","PBDD Extra Depth (pts)",
+    "BFCM Amazon Min %","BFCM vs Target","BFCM Projected % Off MSRP","BFCM Projected Deal Price","BFCM Extra Depth (pts)",
+    "PED %","PED vs Target","PED Projected % Off MSRP","PED Projected Deal Price","PED Extra Depth (pts)","Rationale"];
+  const P="0.0%", M='"$"#,##0.00';
+  const S = v => ({t:"s", v:String(v)});
+  const N = (v,z) => v==null ? null : ({t:"n", v, z});
+  const F = (f,v,z) => (typeof v === "string") ? ({t:"s", v, f}) : ({t:"n", v, f, z});
+  const aoa = [H.map(S)];
+  state.forEach((r,idx)=>{
+    const n = idx+2, c = compute(r), ref = `MIN(F${n},E${n})`;
+    const row = [S(r.sku),S(r.asin),S(r.name),S(isSet(r)?"Set / bundle":"Single brush"),N(r.retail,M),N(r.current,M),
+      F(`IF(E${n}>0,MAX(0,1-${ref}/E${n}),0)`, c.eg, P),
+      F(`IF(G${n}>0,"Evergreen discount","Full price")`, c.eg>0?"Evergreen discount":"Full price"),
+      F(`IF(J${n}="","",E${n}*(1-J${n}))`, r.targetPct==null?"":r.retail*(1-r.targetPct), M),
+      N(r.targetPct,P)];
+    const cols = {pbdd:"K", bfcm:"P", ped:"U"};
+    for (const e of EVENTS){
+      const A = cols[e.k], x = c.ev[e.k];
+      const col = ch => String.fromCharCode(A.charCodeAt(0)+ch);
+      const base = (e.k==="bfcm" && stack) ? `${ref}*(1-IF(K${n}="",0,K${n}))` : ref;
+      row.push(N(r[e.k],P));
+      row.push(F(`IF(OR(${A}${n}="",J${n}=""),"",IF(ABS(${A}${n}-J${n})<0.0005,"Matches target",IF(${A}${n}>J${n},"Higher than target","Lower than target")))`, vsLabelPlain(r[e.k], r.targetPct)));
+      row.push(F(`IF(${A}${n}="","",1-(${base}*(1-${A}${n}))/E${n})`, x?x.proj:"", P));
+      row.push(F(`IF(${A}${n}="","",${base}*(1-${A}${n}))`, x?x.deal:"", M));
+      row.push(F(`IF(${A}${n}="","",${col(2)}${n}-${A}${n})`, x?x.extra:"", P));
+    }
+    row.push(S(EVENTS.map(e=>e.label+": "+rationale(r,c,e)).join("  |  ")));
+    aoa.push(row);
+  });
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws["!cols"] = [18,13,52,13,12,12,12,17,12,11, 11,18,14,13,12, 11,18,14,13,12, 9,18,14,13,12, 120].map(w=>({wch:w}));
+  ws["!autofilter"] = {ref: `A1:Z${aoa.length}`};
+  const m = [
+    ["BK Beauty deal discount forecaster"],["Exported " + new Date().toLocaleString()],[""],
+    ["Assumptions"],["Analysis date","Sep 24, 2026"],["PBDD","Oct 6–7, 2026; 30-day lookback Sep 6 – Oct 5"],["BFCM","From Nov 19, 2026; 30-day lookback Oct 20 – Nov 18, 60-day lookback Sep 20 – Nov 18"],
+    ["PBDD deal price counted in BFCM lookback", stack ? "Yes (stacked worst case)" : "No"],[""],
+    ["Logic"],
+    ["Amazon measures its minimum deal discount against the lowest price in the lookback window, not MSRP."],
+    ["Evergreen discounts on sets and bundles lower that reference price, so the same ask produces a deeper cut off MSRP."],
+    ["Projected % off MSRP = 1 − (1 − Evergreen %) × (1 − Amazon ask %)"],
+    ["Projected deal price = min(Current, Retail) × (1 − Amazon ask %)"],
+    ["Extra depth = Projected % − Amazon ask %. It is 0 when Current Price = Retail Price."],
+    ["Stacked BFCM = 1 − (1 − Evergreen) × (1 − PBDD) × (1 − BFCM), when the PBDD deal price falls inside the 60-day window."],
+    ["Vs Target labels compare Amazon's ask to the brand's Target % Off: Matches / Higher than target / Lower than target."],
+    ["PED applies to SKUs with no PBDD or BFCM ask."],[""],
+    ["Edit Current Price (col F), Target % Off (col J) or the Amazon % columns; every projection column recalculates."],
+    ["Target % Off defaults to 20% as a placeholder where the source file was blank."]
+  ];
+  const ws2 = XLSX.utils.aoa_to_sheet(m); ws2["!cols"]=[{wch:44},{wch:90}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Discount Analysis");
+  XLSX.utils.book_append_sheet(wb, ws2, "Methodology");
+  return wb;
+}
+$("#dl").addEventListener("click", async ()=>{
+  if (typeof XLSX === "undefined"){ say("The spreadsheet library didn't load. Reload the page and try again."); return; }
+  const wb = buildWorkbook(), name = "BKB_Discount_Analysis.xlsx";
+  if (window.claude && typeof window.claude.use === "function"){
+    const d = await window.claude.use("downloads");
+    if (!d){ say("Downloads aren't available in this view."); return; }
+    try {
+      const buf = XLSX.write(wb, {bookType:"xlsx", type:"array"});
+      await d.save({filename:name, data:buf}); say("Saved " + name + ".");
+    } catch(e){
+      const code = e && e.code;
+      say(code==="declined" ? "Download cancelled." : code==="rate_limited" ? "A save prompt is already open. Finish it, then try again." : "The download couldn't start here (" + (code||"error") + ").");
+    }
+  } else { XLSX.writeFile(wb, name); say("Saved " + name + "."); }
+});
+
+buildTimeline(); buildFilters(); buildRows(); refreshAll();
+</script>
+</body>
+</html>
